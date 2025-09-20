@@ -23,7 +23,7 @@ function ContactSection() {
   ];
 
   return (
-    <section className="bg-gradient-to-r from-[#f87171] to-[#fb923c] py-16 px-6 sm:px-6 md:px-10 lg:px-20">
+    <section className="bg-gradient-to-r from-[#f87171] to-[#fb923c] py-16  rounded-xl px-6 md:px-0">
       <motion.div
         variants={containerVariants}
         initial="hidden"

@@ -6,7 +6,7 @@ function Contact() {
           document.title = "Smart Hostel | Contact";
       }, []);
   return (
-    <div className="max-w-[1322px] mx-auto px-6 md:px-0 pt-32 py-12 ">
+    <div className="max-w-[1322px] mx-auto pt-32 py-12 ">
       <ContactSection></ContactSection>
     </div>
   )
