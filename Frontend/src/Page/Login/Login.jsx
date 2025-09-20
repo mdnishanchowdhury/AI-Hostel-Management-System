@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { HiEye, HiEyeOff } from "react-icons/hi";
+import useAuth from "../../Hook/useAuth";
 
 function Login() {
-
     const [showPassword, setShowPassword] = useState(false);
-
+    const { signInUser } = useAuth();
     const handleSubmit = (e) => {
         e.preventDefault();
         const form = e.target;
         const email = form.email.value;
         const password = form.password.value;
+        signInUser(email,password)
+        .then(result=>{
+            console.log(result.user)
+        })
 
-       
     };
 
     useEffect(() => {

@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react';
-import { Link, } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { HiEye, HiEyeOff } from 'react-icons/hi';
+import useAuth from '../../Hook/useAuth';
 
 function SignUp() {
-    const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const [showPassword, setShowPassword] = useState(false);
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const { createUser } = useAuth();
+
 
     const onSubmit = data => {
-        createUser(data)
+        createUser(data.email, data.password)
+            .then(result => {
+                console.log(result.user);
+            })
     };
 
     useEffect(() => {
@@ -34,7 +39,7 @@ function SignUp() {
                     </div>
 
                     {/* Photo URL */}
-                    <div className="form-control">
+                    {/* <div className="form-control">
                         <label className="label text-gray-600 font-poppins font-medium">Photo URL</label>
                         <input
                             type="text"
@@ -42,7 +47,7 @@ function SignUp() {
                             placeholder="Photo URL"
                             className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
                         />
-                    </div>
+                    </div> */}
 
                     {/* Email */}
                     <div className="form-control">

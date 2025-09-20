@@ -41,7 +41,7 @@ function ActivitySection() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, ease: "easeOut" }}
         viewport={{ once: false }}
-        className="absolute top-[809px]  md:top-[279px] right-[4px] md:-right-[150px] -z-10"
+        className="absolute top-[809px]  md:top-[279px] right-[4px] md:-right-[90px] -z-10"
       >
         <img
           src={Ellipse_2}
