@@ -4,8 +4,12 @@ import ContactSection from '../../../Components/HomeSection/ContactSection'
 import HostelFacality from '../../../Components/HomeSection/HostelFacality'
 import Overview from '../../../Components/HomeSection/Overview'
 import FacilitiesSection from '../../../Components/HomeSection/FacilitiesSection'
+import { useEffect } from 'react'
 
 function Home() {
+    useEffect(() => {
+        document.title = "Smart Hostel | Home";
+    }, []);
     return (
         <div>
             <Banner></Banner>

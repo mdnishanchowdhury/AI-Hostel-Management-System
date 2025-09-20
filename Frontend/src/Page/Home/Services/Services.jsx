@@ -1,7 +1,10 @@
-import React from 'react'
+import  { useEffect } from 'react'
 import ServicesSection from '../../../Components/HomeSection/FacilitiesSection'
 
 function Services() {
+    useEffect(() => {
+          document.title = "Smart Hostel | Services";
+      }, []);
   return (
     <div className="max-w-[1322px] mx-auto px-6 md:px-0 pt-32 py-12">
       <ServicesSection></ServicesSection>

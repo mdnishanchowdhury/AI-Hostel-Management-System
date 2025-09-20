@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { IoMenu, IoClose } from 'react-icons/io5';
 
 function Navbar() {
@@ -25,30 +25,29 @@ function Navbar() {
   return (
     <div className="fixed top-0 w-full z-20 bg-white/5 backdrop-blur-md px-4 md:px-6 py-3 shadow-sm">
       <div className="max-w-[1322px] mx-auto flex justify-between items-center">
-        
-        {/* Left Logo/Name */}
+
         <h2 className="text-2xl font-bold font-poppins uppercase text-black">
           Smart Hostel
         </h2>
 
-        {/* Right Side: Links + Buttons */}
         <div className="flex items-center gap-8">
-          {/* Desktop Nav */}
           <ul className="hidden lg:flex flex-row gap-8 xl:gap-14 text-[15px]">
             {links}
           </ul>
 
-          {/* Buttons (Desktop) */}
           <div className="hidden lg:flex space-x-3">
-            <button className="px-5 py-2 rounded-md border border-black text-black font-poppins hover:bg-red-500 hover:text-white transition">
-              Login
-            </button>
+            <Link to='/login'>
+              <button className="px-5 py-2 rounded-md border border-black text-black font-poppins hover:bg-red-500 hover:text-white transition">
+                Login
+              </button>
+            </Link>
+            <Link to='/apply'> 
             <button className="px-5 py-2 rounded-md border border-black text-black font-poppins hover:bg-red-500 hover:text-white transition">
               Apply
             </button>
+            </Link>
           </div>
 
-          {/* Mobile Menu Button */}
           <div className="lg:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
@@ -64,7 +63,6 @@ function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Nav */}
       {isOpen && (
         <div className="lg:hidden mt-3 bg-white rounded-lg shadow-lg p-5">
           <ul className="flex flex-col gap-4 text-gray-800">{links}</ul>

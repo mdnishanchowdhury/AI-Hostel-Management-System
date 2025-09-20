@@ -1,6 +1,10 @@
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 export default function About() {
+    useEffect(() => {
+          document.title = "Smart Hostel | About";
+      }, []);
   return (
     <section className="bg-white max-w-[1322px] mx-auto px-6 md:px-0 pt-32 py-12 ">
       <motion.div

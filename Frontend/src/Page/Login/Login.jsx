@@ -1,40 +1,74 @@
-import { Link, } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { HiEye, HiEyeOff } from "react-icons/hi";
 
 function Login() {
+
+    const [showPassword, setShowPassword] = useState(false);
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const form = e.target;
         const email = form.email.value;
         const password = form.password.value;
+
+       
     };
 
+    useEffect(() => {
+        document.title = "Smart Hostel | Sign in";
+    }, []);
+
     return (
-        <div className="hero bg-base-200 min-h-screen">
-            <div className="hero-content flex flex-col lg:flex-row-reverse gap-16 md:gap-[204px]">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#f87171] to-[#fb923c]">
+            <div className="card w-full max-w-md bg-white shadow-xl rounded-2xl p-6 md:p-10">
+                <h2 className="text-4xl font-medium font-poppins text-center text-gray-800 mb-6">Sign in</h2>
 
-                {/* Login Card */}
-                <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-                    <h2 className='text-4xl font-bold text-center'>Login</h2>
-                    <form className="card-body" onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="space-y-5">
+                    <div className="form-control">
+                        <label className="label text-gray-600 font-poppins font-medium">Email</label>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
+                            required
+                        />
+                    </div>
 
-                        <div className="form-control">
-                            <label className="label">Email</label>
-                            <input name="email" type="email" className="input input-bordered w-full" placeholder="Email" required />
-                        </div>
+                    <div className="form-control relative">
+                        <label className="label font-poppins text-gray-600 font-medium">Password</label>
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            name="password"
+                            placeholder="Enter your password"
+                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none pr-10"
+                            required
+                        />
+                        <span
+                            className="absolute right-3 top-[38px] cursor-pointer font-poppins text-gray-500"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
+                        </span>
+                    </div>
 
-                        <div className="form-control">
-                            <label className="label">Password</label>
-                            <input type="password" name="password" className="input input-bordered w-full" placeholder="Password" required />
-                        </div>
+                    <div className="form-control mt-4">
+                        <button
+                            type="submit"
+                            className="btn bg-[#f87171] font-poppins hover:bg-red-600 text-white font-semibold w-full rounded-lg transition-all duration-300"
+                        >
+                            Login
+                        </button>
+                    </div>
+                </form>
 
-                        <div className="form-control">
-                            <input className="btn btn-neutral bg-[#D1A054] w-full mt-4" type="submit" value="Login" />
-                        </div>
-                    </form>
-                    <h2 className='font-semibold text-center mb-2 text-[#D1A054]'><span className='font-normal'>New here? </span> <Link to='/signUp'>Create a New Account</Link></h2>
-                </div>
-
-
+                <p className="text-center text-gray-500 mt-4">
+                    New here?{" "}
+                    <Link to="/signUp" className="text-[#f87171] font-poppins font-semibold hover:underline">
+                        Create a New Account
+                    </Link>
+                </p>
             </div>
         </div>
     );

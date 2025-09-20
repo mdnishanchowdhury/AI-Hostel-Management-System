@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 export default function FeesDetails() {
   const hostelCharges = [
@@ -10,6 +11,9 @@ export default function FeesDetails() {
     { label: "Booking Advance (Non-refundable)", amount: "৳ 5,000" },
   ];
 
+  useEffect(() => {
+    document.title = "Smart Hostel | Fees";
+  }, []);
   return (
     <motion.div className="max-w-[1322px] mx-auto px-6 md:px-0 pt-32 py-12"
       initial={{ opacity: 0, y: 30 }}

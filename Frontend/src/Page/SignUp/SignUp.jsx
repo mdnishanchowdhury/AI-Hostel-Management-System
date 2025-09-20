@@ -1,66 +1,107 @@
-import { useEffect } from 'react'
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { HiEye, HiEyeOff } from 'react-icons/hi';
 
 function SignUp() {
-    const { register, handleSubmit, reset, watch, formState: { errors } } = useForm();
+    const { register, handleSubmit, reset, formState: { errors } } = useForm();
+    const [showPassword, setShowPassword] = useState(false);
 
     const onSubmit = data => {
         createUser(data)
-
     };
 
     useEffect(() => {
-        document.title = 'Restaurant | SignUp Form';
+        document.title = 'Smart Hostel | SignUp';
     }, []);
+
     return (
-        <div className="hero bg-base-200 min-h-screen ">
-            <div className="hero-content flex flex-col lg:flex-row-reverse gap-16 md:gap-[204px]">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r  from-[#f87171] to-[#fb923c] py-10">
+            <div className="card w-full max-w-md bg-white shadow-xl rounded-2xl p-6 md:p-10">
+                <h2 className="text-4xl font-normal text-center font-poppins text-gray-800 mb-6">Create Account</h2>
 
-                {/* Login Card */}
-                <div className="card bg-base-100 w-full max-w-sm shrink-0 shadow-2xl">
-                    <h2 className='text-4xl font-bold text-center'>SignUp</h2>
-                    <form className="card-body" onSubmit={handleSubmit(onSubmit)}>
-                        {/* Name */}
-                        <div className="form-control">
-                            <label className="label">Name</label>
-                            <input name="name" {...register("name",)} type="text" className="input input-bordered w-full" placeholder="Name" />
-                            {errors.name && <span className='text-red-600'>Name is required</span>}
-                        </div>
-                        {/* Photo URl */}
-                        <div className="form-control">
-                            <label className="label">Photo URl</label>
-                            <input {...register("PhotoURl",)} type="text" className="input input-bordered w-full" placeholder="Photo URl" />
-                            {errors.PhotoURl && <span className='text-red-600'>Name is required</span>}
-                        </div>
-                        {/* Email */}
-                        <div className="form-control">
-                            <label className="label">Email</label>
-                            <input name="email" {...register("email", { required: true })} type="email" className="input input-bordered w-full" placeholder="Email" />
-                            {errors.email && <span className='text-red-600'>Email is required</span>}
-                        </div>
-                        {/* password */}
-                        <div className="form-control">
-                            <label className="label">Password</label>
-                            <input type="password" {...register("password", { required: true, minLength: 6, maxLength: 20, pattern: /^^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$/ })} name="password" className="input input-bordered w-full" placeholder="Password" />
-                            {errors.password?.type === 'minLength' && <span className='text-red-600'>password must be 6 characters </span>}
-                            {errors.password?.type === 'maxLength' && <span className='text-red-600'>password must be less then 20 characters </span>}
-                            {errors.password?.type === 'pattern' && <span className='text-red-600'>password must have one upper case, one lower case & one number, </span>}
-                        </div>
-                        {/* btn */}
-                        <div className="form-control">
-                            <input className="btn btn-neutral bg-[#D1A054] w-full mt-4" type="submit" value="Sign Up" />
-                        </div>
-                    </form>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                    {/* Name */}
+                    <div className="form-control">
+                        <label className="label text-gray-600 font-medium font-poppins">Name</label>
+                        <input
+                            type="text"
+                            {...register("name", { required: true })}
+                            placeholder="Your Name"
+                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
+                        />
+                        {errors.name && <span className='text-red-600'>Name is required</span>}
+                    </div>
 
-                    <h2 className='font-semibold text-center mb-2 text-[#D1A054]'><span className='font-normal'>Already registered? </span> <Link to='/login'> Go to log in</Link></h2>
-                    
-                </div>
+                    {/* Photo URL */}
+                    <div className="form-control">
+                        <label className="label text-gray-600 font-poppins font-medium">Photo URL</label>
+                        <input
+                            type="text"
+                            {...register("PhotoURl")}
+                            placeholder="Photo URL"
+                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
+                        />
+                    </div>
 
+                    {/* Email */}
+                    <div className="form-control">
+                        <label className="label text-gray-600 font-poppins font-medium">Email</label>
+                        <input
+                            type="email"
+                            {...register("email", { required: true })}
+                            placeholder="Email"
+                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
+                        />
+                        {errors.email && <span className='text-red-600'>Email is required</span>}
+                    </div>
+
+                    {/* Password */}
+                    <div className="form-control relative">
+                        <label className="label font-poppins text-gray-600 font-medium">Password</label>
+                        <input
+                            type={showPassword ? "text" : "password"}
+                            {...register("password", {
+                                required: true,
+                                minLength: 6,
+                                maxLength: 20,
+                                pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{6,}$/
+                            })}
+                            placeholder="Password"
+                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none pr-10"
+                        />
+                        <span
+                            className="absolute right-3 top-[38px] cursor-pointer font-poppins text-gray-500"
+                            onClick={() => setShowPassword(!showPassword)}
+                        >
+                            {showPassword ? <HiEyeOff size={20} /> : <HiEye size={20} />}
+                        </span>
+                        {errors.password?.type === 'minLength' && <span className='text-red-600'>Password must be at least 6 characters</span>}
+                        {errors.password?.type === 'maxLength' && <span className='text-red-600'>Password must be less than 20 characters</span>}
+                        {errors.password?.type === 'pattern' && <span className='text-red-600'>Password must include one uppercase, one lowercase & one number</span>}
+                    </div>
+
+                    {/* Submit */}
+                    <div className="form-control mt-4">
+                        <button
+                            type="submit"
+                            className="btn bg-[#f87171] font-poppins hover:bg-red-600 text-white font-semibold w-full rounded-lg transition-all duration-300"
+                        >
+                            Sign Up
+                        </button>
+                    </div>
+                </form>
+
+                {/* <p className="text-center text-gray-500 mt-4">
+                    Already registered?{" "}
+                    <Link to='' className="text-red-600 font-semibold hover:underline">
+                        Go to Login
+                    </Link>
+                </p> */}
 
             </div>
         </div>
-    )
+    );
 }
 
 export default SignUp;
