@@ -21,7 +21,7 @@ function Overview() {
                 </motion.div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-  <motion.div
+                    <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
@@ -65,7 +65,7 @@ function Overview() {
                     </motion.div>
 
                     {/*  24/7 Security */}
-                  
+
 
                 </div>
             </div>
