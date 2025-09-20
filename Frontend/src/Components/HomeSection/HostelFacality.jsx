@@ -23,7 +23,7 @@ const members = [
 
 export default function HostelFacality() {
   return (
-    <section className="py-16 max-w-[1322px] mx-auto">
+    <section className="py-16 max-w-[1322px] px-6 md:px-0 mx-auto">
       <div className="text-center mb-12">
         <h1 className="text-4xl sm:text-4xl md:text-5xl font-semibold text-gray-900 font-poppins">
           Hostel <span className="text-[#FA8370]">Committee</span>

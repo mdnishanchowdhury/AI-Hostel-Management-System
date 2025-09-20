@@ -11,13 +11,12 @@ export default function FeesDetails() {
   ];
 
   return (
-    <motion.div
-      className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12"
+    <motion.div className="max-w-[1322px] mx-auto px-6 md:px-0 pt-32 py-12"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.7, ease: "easeOut" }}
     >
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#089cc2] mb-12 text-center">
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#FA8370] mb-12 text-center">
         Hostel Fees Breakdown
       </h2>
 
@@ -67,7 +66,7 @@ export default function FeesDetails() {
                 <span>{amount}</span>
               </motion.li>
             ))}
-            <li className="flex justify-between border-b border-gray-400 pb-2 font-bold text-green-700 text-lg">
+            <li className="flex justify-between border-b border-gray-400 pb-2 font-bold text-[#FA8370] text-lg">
               <span>Total Initial Payable</span>
               <span>৳ 12,500</span>
             </li>

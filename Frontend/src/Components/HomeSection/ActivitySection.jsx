@@ -34,7 +34,7 @@ function ActivitySection() {
   const ellipseYRaw = useTransform(scrollY, [0, 600], [-500, 0]);
   const ellipseY = useSpring(ellipseYRaw, { stiffness: 60, damping: 20 });
   return (
-    <div className="relative max-w-[1322px] mx-auto  py-12">
+    <div className="relative max-w-[1322px] mx-auto  px-6 md:px-0  py-12">
       {/* Ellipse 2 */}
       <motion.div
         initial={{ opacity: 0, y: -200 }}

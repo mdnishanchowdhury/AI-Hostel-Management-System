@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 function Overview() {
     return (
-        <section className="w-full px-3 md:px-6 py-6 md:py-20">
+        <section className="w-full  py-6 md:py-20">
             <div className="max-w-[1322px] mx-auto px-6 lg:px-0 flex flex-col lg:flex-row items-start lg:items-center gap-10">
 
                 <motion.div

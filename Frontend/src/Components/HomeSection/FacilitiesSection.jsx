@@ -2,7 +2,7 @@ import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { Wifi, BedDouble, Shield, Utensils, Wind, Droplet } from "lucide-react";
 import Ellipse_2 from "../../assets/Banner/Ellipse_4.png";
 import Card from "./Card";
-function Services() {
+function FacilitiesSection() {
   const { scrollY } = useScroll();
   const ellipseOpacity = useTransform(scrollY, [0, 600], [0, 1]);
   const ellipseYRaw = useTransform(scrollY, [0, 600], [-500, 0]);
@@ -10,7 +10,7 @@ function Services() {
 
   const items = [
     {
-      icon: <BedDouble className="w-8 h-8 text-blue-600" />,
+      icon: <BedDouble className="w-8 h-8  text-blue-600" />,
       title: "Comfortable Beds",
       description:
         "Every room is equipped with individual beds, high-quality mattresses, and pillows for comfortable sleep.",
@@ -49,7 +49,7 @@ function Services() {
 
 
   return (
-    <div className="relative max-w-[1322px] mx-auto ">
+    <div className="relative max-w-[1322px] px-3 md:px-0  mx-auto ">
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-center pb-5 md:pb-7">
         Hostel <span className="text-[#FA8370]">Services & Facilities</span>
       </h2>
@@ -94,4 +94,4 @@ function Services() {
   );
 }
 
-export default Services;
+export default FacilitiesSection;
