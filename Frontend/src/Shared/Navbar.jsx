@@ -27,7 +27,7 @@ function Navbar() {
       <div className="max-w-[1322px] mx-auto flex justify-between items-center">
 
         {/* <img src={logo} alt="Logo" className="w-[153px] h-[27px] object-cover" /> */}
-        <h2 className='text-2xl font-bold font-poppins uppercase'>Smart Hostel</h2>
+        <h2 className='text-2xl font-bold font-poppins uppercase '>Smart Hostel</h2>
 
         <ul className="hidden lg:flex flex-row gap-10 xl:gap-14 text-[15px] font-medium text-white">
           {links}
