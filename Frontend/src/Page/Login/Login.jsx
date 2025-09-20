@@ -1,20 +1,31 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import useAuth from "../../Hook/useAuth";
+import Swal from "sweetalert2";
 
 function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const { signInUser } = useAuth();
+    const navigate = useNavigate();
+
     const handleSubmit = (e) => {
         e.preventDefault();
         const form = e.target;
         const email = form.email.value;
         const password = form.password.value;
-        signInUser(email,password)
-        .then(result=>{
-            console.log(result.user)
-        })
+        signInUser(email, password)
+            .then(result => {
+                // console.log(result.user)
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Logged in successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                navigate('/')
+            })
 
     };
 
@@ -23,7 +34,7 @@ function Login() {
     }, []);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#f87171] to-[#fb923c]">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#f87171] to-[#fb923c] px-3 md:px-0">
             <div className="card w-full max-w-md bg-white shadow-xl rounded-2xl p-6 md:p-10">
                 <h2 className="text-4xl font-medium font-poppins text-center text-gray-800 mb-6">Sign in</h2>
 

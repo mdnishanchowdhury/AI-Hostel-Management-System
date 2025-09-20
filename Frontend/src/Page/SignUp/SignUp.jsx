@@ -2,17 +2,26 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { HiEye, HiEyeOff } from 'react-icons/hi';
 import useAuth from '../../Hook/useAuth';
-
+import Swal from 'sweetalert2'
+import { useNavigate } from 'react-router-dom';
 function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
     const { createUser } = useAuth();
-
+    const navigate = useNavigate();
 
     const onSubmit = data => {
         createUser(data.email, data.password)
             .then(result => {
-                console.log(result.user);
+                // console.log(result.user);
+                Swal.fire({
+                    position: "top-end",
+                    icon: "success",
+                    title: "Account created successfully!",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                navigate('/login')
             })
     };
 
@@ -21,7 +30,7 @@ function SignUp() {
     }, []);
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r  from-[#f87171] to-[#fb923c] py-10">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-r  from-[#f87171] to-[#fb923c] py-10 px-3 md:px-0">
             <div className="card w-full max-w-md bg-white shadow-xl rounded-2xl p-6 md:p-10">
                 <h2 className="text-4xl font-normal text-center font-poppins text-gray-800 mb-6">Create Account</h2>
 
