@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useSpring } from "framer-motion";
 import { CalendarDays, Trophy, Music, Users } from "lucide-react";
-
+import Ellipse_2 from "../../assets/Banner/Ellipse_4.png";
 const activities = [
   {
     icon: <CalendarDays className="w-8 h-8 text-blue-600" />,
@@ -29,8 +29,27 @@ const activities = [
 ];
 
 function ActivitySection() {
+  const { scrollY } = useScroll();
+  const ellipseOpacity = useTransform(scrollY, [0, 600], [0, 1]);
+  const ellipseYRaw = useTransform(scrollY, [0, 600], [-500, 0]);
+  const ellipseY = useSpring(ellipseYRaw, { stiffness: 60, damping: 20 });
   return (
     <div className="relative max-w-[1322px] mx-auto  py-12">
+      {/* Ellipse 2 */}
+      <motion.div
+        initial={{ opacity: 0, y: -200 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, ease: "easeOut" }}
+        viewport={{ once: false }}
+        className="absolute top-[279px] -right-[150px] -z-10"
+      >
+        <img
+          src={Ellipse_2}
+          alt="image"
+          className="w-[320px] sm:w-[500px] md:w-[400px] h-[324px] opacity-70"
+        />
+      </motion.div>
+
       <h2 className="text-2xl sm:text-3xl md:text-4xl font-medium text-center pb-10">
         Hostel <span className="text-[#FA8370]">Activities</span>
       </h2>
