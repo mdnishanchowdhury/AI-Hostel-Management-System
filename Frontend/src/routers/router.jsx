@@ -9,7 +9,8 @@ import Facilities from "../Page/Home/Facilities/Facilities";
 import SignUp from "../Page/SignUp/SignUp";
 import Login from "../Page/Login/Login";
 import UserMain from "../Layout/UserMain";
-import Dashboard from "../Page/UserDashBoard/Dashboard";
+import UserDashBoard from "../Page/UserDashBoard/UserDashBoard";
+import ApplyForm from "../Page/ApplyForm/ApplyForm";
 
 export const router = createBrowserRouter([
     {
@@ -48,15 +49,19 @@ export const router = createBrowserRouter([
                 path: 'signUp',
                 element: <SignUp></SignUp>,
             },
+            {
+                path: 'apply',
+                element: <ApplyForm></ApplyForm>,
+            },
         ]
     },
     {
-        path: "user",
+        path: "dashboard",
         element: <UserMain></UserMain>,
         children: [
             {
                 path: "",
-                element: <Dashboard></Dashboard>,
+                element: <UserDashBoard></UserDashBoard>,
             },
         ]
     }

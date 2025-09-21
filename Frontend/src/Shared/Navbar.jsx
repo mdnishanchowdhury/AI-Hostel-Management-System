@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { IoMenu, IoClose } from 'react-icons/io5';
-import useAuth from '../Hook/useAuth';
 import Swal from 'sweetalert2';
+import useAuth from '../Hook/useAuth';
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);

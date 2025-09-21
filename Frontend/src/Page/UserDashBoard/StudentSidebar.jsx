@@ -14,25 +14,25 @@ import {
   FaHistory,
 } from "react-icons/fa";
 
+const base = "/dashboard";
+
 const menuItems = [
-  { path: "/auth", label: "Dashboard", icon: <FaHome /> },
-  { path: "/auth/room", label: "My Room", icon: <FaBed /> },
-  { path: "/auth/mealbooking", label: "Meals", icon: <FaUtensils /> },
-  { path: "/auth/payments", label: "Make Payment", icon: <FaMoneyBill /> },
-  { path: "/auth/payments/history", label: "Payment History", icon: <FaHistory /> },
-  { path: "/auth/attendance", label: "Attendance", icon: <FaClipboardCheck /> },
-  { path: "/auth/profile", label: "Profile", icon: <FaUser /> },
-  { path: "/auth/settings", label: "Settings", icon: <FaCog /> },
+  { path: `${base}`, label: "Dashboard", icon: <FaHome /> },
+  { path: `${base}/room`, label: "My Room", icon: <FaBed /> },
+  { path: `${base}/mealbooking`, label: "Meals", icon: <FaUtensils /> },
+  { path: `${base}/payments`, label: "Make Payment", icon: <FaMoneyBill /> },
+  { path: `${base}/payments/history`, label: "Payment History", icon: <FaHistory /> },
+  { path: `${base}/attendance`, label: "Attendance", icon: <FaClipboardCheck /> },
+  { path: `${base}/profile`, label: "Profile", icon: <FaUser /> },
+  { path: `${base}/settings`, label: "Settings", icon: <FaCog /> },
 ];
 
-const UserMenu= () => {
+const StudentSidebar = () => {
   const location = useLocation();
   const [open, setOpen] = useState(window.innerWidth >= 768);
 
   useEffect(() => {
-    const handleResize = () => {
-      setOpen(window.innerWidth >= 768);
-    };
+    const handleResize = () => setOpen(window.innerWidth >= 768);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -66,14 +66,14 @@ const UserMenu= () => {
             ${open ? "opacity-100" : "opacity-0 pointer-events-none"}`}
           aria-hidden={!open}
         >
-          Student Menu
+          Student Dashboard
         </h2>
       </div>
 
       {/* Menu Items */}
       <ul className="flex-1 overflow-y-auto px-2 py-4 space-y-2">
         {menuItems.map(({ path, label, icon }) => {
-          const isActive = location.pathname === path;
+          const isActive = location.pathname.startsWith(path);
           return (
             <li key={path}>
               <Link
@@ -121,4 +121,4 @@ const UserMenu= () => {
   );
 };
 
-export default UserMenu;
+export default StudentSidebar;

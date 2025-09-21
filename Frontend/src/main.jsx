@@ -5,8 +5,8 @@ import './index.css'
 import {
   RouterProvider,
 } from "react-router-dom";
-import { router } from './router/router.jsx';
 import AuthProvider from './Provider/AuthProvider.jsx';
+import { router } from './routers/router.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

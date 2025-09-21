@@ -1,9 +1,13 @@
-import React from 'react'
+import StudentSidebar from '../Page/UserDashBoard/StudentSidebar'
+import { Outlet } from 'react-router-dom'
 
 function UserMain() {
-  return (
-    <div>UserMain</div>
-  )
+    return (
+        <div className='flex gap-4'>
+            <StudentSidebar></StudentSidebar>
+            <Outlet></Outlet>
+        </div>
+    )
 }
 
 export default UserMain
