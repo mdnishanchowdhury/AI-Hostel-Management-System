@@ -5,6 +5,21 @@ function Step1BasicInfo({ formData, handleChange, nextStep }) {
         Step 1: Basic Information
       </h2>
 
+      {/* Student Name */}
+      <div className="flex flex-col gap-1">
+        <label htmlFor="studentId" className="text-sm font-medium text-gray-600">
+          Student Name
+        </label>
+        <input
+          id="name"
+          name="name"
+          placeholder="Enter your name"
+          value={formData.studentId}
+          onChange={handleChange}
+          className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
+          required
+        />
+      </div>
       {/* Student ID */}
       <div className="flex flex-col gap-1">
         <label htmlFor="studentId" className="text-sm font-medium text-gray-600">
@@ -32,23 +47,6 @@ function Step1BasicInfo({ formData, handleChange, nextStep }) {
           name="email"
           placeholder="Enter your email"
           value={formData.email}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
-          required
-        />
-      </div>
-
-      {/* Password */}
-      <div className="flex flex-col gap-1">
-        <label htmlFor="password" className="text-sm font-medium text-gray-600">
-          Password
-        </label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          placeholder="Enter a password"
-          value={formData.password}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
           required

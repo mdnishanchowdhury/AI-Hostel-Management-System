@@ -1,5 +1,5 @@
 function Step3RoomSelect({ formData, handleChange, prevStep }) {
-  
+
   const handleSubmit = () => {
     alert("Submitted! Data: " + JSON.stringify(formData, null, 2));
   };
