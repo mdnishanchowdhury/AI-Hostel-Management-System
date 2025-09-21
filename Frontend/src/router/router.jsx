@@ -4,11 +4,12 @@ import Home from "../Page/Home/Home/Home";
 import Fees from "../Page/Home/Fees/Fees";
 import Contact from "../Page/Home/Contact/Contact";
 import About from "../Page/Home/About/About";
-import Dashboard from "../Components/HomeSection/Dashboard";
 import Services from "../Page/Home/Services/Services";
 import Facilities from "../Page/Home/Facilities/Facilities";
 import SignUp from "../Page/SignUp/SignUp";
 import Login from "../Page/Login/Login";
+import UserMain from "../Layout/UserMain";
+import Dashboard from "../Page/UserDashBoard/Dashboard";
 
 export const router = createBrowserRouter([
     {
@@ -40,10 +41,6 @@ export const router = createBrowserRouter([
                 element: <Facilities></Facilities>,
             },
             {
-                path: 'dashboard',
-                element: <Dashboard></Dashboard>,
-            },
-            {
                 path: 'login',
                 element: <Login></Login>,
             },
@@ -53,4 +50,14 @@ export const router = createBrowserRouter([
             },
         ]
     },
+    {
+        path: "user",
+        element: <UserMain></UserMain>,
+        children: [
+            {
+                path: "",
+                element: <Dashboard></Dashboard>,
+            },
+        ]
+    }
 ]);
