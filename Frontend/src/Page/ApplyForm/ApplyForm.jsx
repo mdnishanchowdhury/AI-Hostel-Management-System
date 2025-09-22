@@ -6,10 +6,14 @@ import Step3RoomSelect from "./Step3RoomSelect";
 function ApplyForm() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
+    name: "",          // ✅ added name
     studentId: "",
     email: "",
-    password: "",
     department: "",
+    phone: "",
+    fatherName: "",
+    fatherPhone: "",
+    address: "",
     isQuiet: "yes",
     sleepTime: "early",
     studyTime: "day",
@@ -59,5 +63,4 @@ function ApplyForm() {
   );
 }
 
-
-export default ApplyForm
+export default ApplyForm;

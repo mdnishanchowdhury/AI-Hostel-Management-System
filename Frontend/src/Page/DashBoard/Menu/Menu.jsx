@@ -20,7 +20,7 @@ import useAdmin from "../../../Hook/useAdmin";
 const Menu = () => {
   const location = useLocation();
   const [isAdmin, isAdminLoading] = useAdmin();
-  console.log('admin',isAdmin)
+
   const [open, setOpen] = useState(window.innerWidth >= 768);
 
   useEffect(() => {
@@ -35,7 +35,10 @@ const Menu = () => {
 
   const menuItems = isAdmin
     ? [
+      { path: `${base}`, label: "Dashboard", icon: <FaHome /> },
+      { path: `${base}/application`, label: "Application", icon: <FaHome /> },
       { path: `${base}/allUsers`, label: "All User", icon: <FaCog /> },
+
     ]
     : [
       { path: `${base}`, label: "Dashboard", icon: <FaHome /> },

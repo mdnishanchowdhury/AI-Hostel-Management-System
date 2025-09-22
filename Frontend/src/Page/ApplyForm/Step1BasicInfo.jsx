@@ -7,19 +7,20 @@ function Step1BasicInfo({ formData, handleChange, nextStep }) {
 
       {/* Student Name */}
       <div className="flex flex-col gap-1">
-        <label htmlFor="studentId" className="text-sm font-medium text-gray-600">
+        <label htmlFor="name" className="text-sm font-medium text-gray-600">
           Student Name
         </label>
         <input
           id="name"
           name="name"
           placeholder="Enter your name"
-          value={formData.studentId}
+          value={formData.name}  // ✅ fixed
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:outline-none"
           required
         />
       </div>
+
       {/* Student ID */}
       <div className="flex flex-col gap-1">
         <label htmlFor="studentId" className="text-sm font-medium text-gray-600">

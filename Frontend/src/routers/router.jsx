@@ -13,6 +13,7 @@ import DashboardMain from "../Layout/dashboardMain";
 import PrivetRoute from "./PrivetRoute";
 import AllUsers from "../Page/DashBoard/AllUsers/AllUsers";
 import Dashboard from "../Page/DashBoard/Dashboard/Dashboard";
+import AdminApplications from "../Page/DashBoard/AdminApplications/AdminApplications";
 
 export const router = createBrowserRouter([
     {
@@ -68,6 +69,10 @@ export const router = createBrowserRouter([
             {
                 path: "allUsers",
                 element: <PrivetRoute><AllUsers></AllUsers></PrivetRoute>,
+            },
+            {
+                path: "application",
+                element: <AdminApplications></AdminApplications>,
             },
         ]
     }

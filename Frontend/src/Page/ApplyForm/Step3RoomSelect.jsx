@@ -1,7 +1,15 @@
-function Step3RoomSelect({ formData, handleChange, prevStep }) {
+import useAxiosSecure from "../../Hook/useAxiosSecure";
 
+function Step3RoomSelect({ formData, handleChange, prevStep }) {
+  const axiosSecure = useAxiosSecure();
   const handleSubmit = () => {
-    alert("Submitted! Data: " + JSON.stringify(formData, null, 2));
+    // alert("Submitted! Data: " + JSON.stringify(formData, null, 2));
+
+    axiosSecure.post('/application', formData)
+      .then(res => {
+        console.log('apply form', res.data)
+      })
+
   };
 
   return (
