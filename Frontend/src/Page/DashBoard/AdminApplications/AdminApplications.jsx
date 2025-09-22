@@ -1,53 +1,47 @@
-import { useEffect, useState } from "react";
 import useAxiosSecure from "../../../Hook/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 function AdminApplications() {
-    const [applications, setApplications] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState("");
-
     const axiosSecure = useAxiosSecure();
+    const [loadingActionId, setLoadingActionId] = useState(null);
 
-    // Fetch all applications
-    const fetchApplications = async () => {
-        try {
-            setError("");
-            const res = await axiosSecure.get("/applications");
-            setApplications(res.data);
-            setLoading(false);
-        } catch (err) {
-            console.error(err);
-            setError(err.response?.data?.message || "Something went wrong");
-            setLoading(false);
+    // Fetch applications
+    const { data: applications = [], refetch, isLoading } = useQuery({
+        queryKey: ['applications'],
+        queryFn: async () => {
+            const res = await axiosSecure.get('/applications');
+            return res.data;
         }
-    };
-
-    useEffect(() => {
-        fetchApplications();
-    }, []);
+    });
 
     // Handle Accept / Reject
     const handleAction = async (id, action) => {
         try {
+            setLoadingActionId(id);
             await axiosSecure.patch(`/application/${id}`, { action });
-            // Refresh applications list after action
-            fetchApplications();
+            await refetch();
         } catch (err) {
             console.error(err);
-            setError(err.response?.data?.message || "Action failed");
+        } finally {
+            setLoadingActionId(null);
         }
     };
 
-    if (loading) return <p>Loading applications...</p>;
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center py-20 w-full">
+                <span className="loading loading-spinner loading-xl"></span>
+            </div>
+        );
+    }
 
     return (
         <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
             <h1 className="text-2xl font-bold mb-6">Admin - Hostel Applications</h1>
 
-            {error && <p className="text-red-500 mb-4">{error}</p>}
-
             {applications.length === 0 ? (
-                <p>No applications found.</p>
+                <p className="text-gray-500">No applications found.</p>
             ) : (
                 <div className="space-y-4">
                     {applications.map((app) => (
@@ -65,13 +59,15 @@ function AdminApplications() {
                                     <>
                                         <button
                                             onClick={() => handleAction(app._id, "accepted")}
-                                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded disabled:opacity-50"
+                                            disabled={loadingActionId === app._id}
                                         >
                                             Accept
                                         </button>
                                         <button
                                             onClick={() => handleAction(app._id, "rejected")}
-                                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded"
+                                            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded disabled:opacity-50"
+                                            disabled={loadingActionId === app._id}
                                         >
                                             Reject
                                         </button>

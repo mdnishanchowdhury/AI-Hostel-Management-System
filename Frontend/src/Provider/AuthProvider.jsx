@@ -7,7 +7,7 @@ function AuthProvider({ children }) {
     const auth = getAuth(app);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    const axiosPublic=useAxiosPublic();
+    const axiosPublic = useAxiosPublic();
 
 
     // create user

@@ -72,7 +72,7 @@ export const router = createBrowserRouter([
             },
             {
                 path: "application",
-                element: <AdminApplications></AdminApplications>,
+                element: <PrivetRoute><AdminApplications></AdminApplications></PrivetRoute>,
             },
         ]
     }
