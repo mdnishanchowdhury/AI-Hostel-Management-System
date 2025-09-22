@@ -8,7 +8,7 @@ function AdminApplications() {
 
     const axiosSecure = useAxiosSecure();
 
-    // Fetch all applications (Admin)
+    // Fetch all applications
     const fetchApplications = async () => {
         try {
             setError("");
