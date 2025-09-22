@@ -13,22 +13,14 @@ import {
   FaSignOutAlt,
   FaHistory,
 } from "react-icons/fa";
+import useAdmin from "../../../Hook/useAdmin";
 
-const base = "/dashboard";
 
-const menuItems = [
-  { path: `${base}`, label: "Dashboard", icon: <FaHome /> },
-  { path: `${base}/room`, label: "My Room", icon: <FaBed /> },
-  { path: `${base}/mealbooking`, label: "Meals", icon: <FaUtensils /> },
-  { path: `${base}/payments`, label: "Make Payment", icon: <FaMoneyBill /> },
-  { path: `${base}/payments/history`, label: "Payment History", icon: <FaHistory /> },
-  { path: `${base}/attendance`, label: "Attendance", icon: <FaClipboardCheck /> },
-  { path: `${base}/profile`, label: "Profile", icon: <FaUser /> },
-  { path: `${base}/settings`, label: "Settings", icon: <FaCog /> },
-];
 
-const StudentSidebar = () => {
+const Menu = () => {
   const location = useLocation();
+  const [isAdmin, isAdminLoading] = useAdmin();
+  console.log('admin',isAdmin)
   const [open, setOpen] = useState(window.innerWidth >= 768);
 
   useEffect(() => {
@@ -36,6 +28,25 @@ const StudentSidebar = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+
+  // btn
+  const base = "/dashboard";
+
+  const menuItems = isAdmin
+    ? [
+      { path: `${base}/allUsers`, label: "All User", icon: <FaCog /> },
+    ]
+    : [
+      { path: `${base}`, label: "Dashboard", icon: <FaHome /> },
+      { path: `${base}/room`, label: "My Room", icon: <FaBed /> },
+      { path: `${base}/mealbooking`, label: "Meals", icon: <FaUtensils /> },
+      { path: `${base}/payments`, label: "Make Payment", icon: <FaMoneyBill /> },
+      { path: `${base}/payments/history`, label: "Payment History", icon: <FaHistory /> },
+      { path: `${base}/attendance`, label: "Attendance", icon: <FaClipboardCheck /> },
+      { path: `${base}/profile`, label: "Profile", icon: <FaUser /> },
+      { path: `${base}/settings`, label: "Settings", icon: <FaCog /> },
+    ];
 
   return (
     <aside
@@ -80,18 +91,16 @@ const StudentSidebar = () => {
                 to={path}
                 className={`flex items-center gap-4 px-3 py-2 rounded-md text-sm font-semibold
                   transition-colors duration-300
-                  ${
-                    isActive
-                      ? "bg-teal-600 bg-opacity-30 text-teal-400"
-                      : "hover:bg-slate-700 hover:text-teal-400 text-slate-300"
+                  ${isActive
+                    ? "bg-teal-600 bg-opacity-30 text-teal-400"
+                    : "hover:bg-slate-700 hover:text-teal-400 text-slate-300"
                   }`}
                 aria-current={isActive ? "page" : undefined}
               >
                 <span className="text-lg">{icon}</span>
                 <span
-                  className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${
-                    open ? "max-w-full opacity-100" : "max-w-0 opacity-0"
-                  }`}
+                  className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${open ? "max-w-full opacity-100" : "max-w-0 opacity-0"
+                    }`}
                 >
                   {label}
                 </span>
@@ -108,9 +117,8 @@ const StudentSidebar = () => {
           >
             <FaSignOutAlt className="text-lg" />
             <span
-              className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${
-                open ? "max-w-full opacity-100" : "max-w-0 opacity-0"
-              }`}
+              className={`whitespace-nowrap overflow-hidden transition-all duration-300 ${open ? "max-w-full opacity-100" : "max-w-0 opacity-0"
+                }`}
             >
               Logout
             </span>
@@ -121,4 +129,4 @@ const StudentSidebar = () => {
   );
 };
 
-export default StudentSidebar;
+export default Menu;

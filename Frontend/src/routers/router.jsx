@@ -8,9 +8,11 @@ import Services from "../Page/Home/Services/Services";
 import Facilities from "../Page/Home/Facilities/Facilities";
 import SignUp from "../Page/SignUp/SignUp";
 import Login from "../Page/Login/Login";
-import UserMain from "../Layout/UserMain";
-import UserDashBoard from "../Page/UserDashBoard/UserDashBoard";
 import ApplyForm from "../Page/ApplyForm/ApplyForm";
+import DashboardMain from "../Layout/dashboardMain";
+import PrivetRoute from "./PrivetRoute";
+import AllUsers from "../Page/DashBoard/AllUsers/AllUsers";
+import Dashboard from "../Page/DashBoard/Dashboard/Dashboard";
 
 export const router = createBrowserRouter([
     {
@@ -57,11 +59,15 @@ export const router = createBrowserRouter([
     },
     {
         path: "dashboard",
-        element: <UserMain></UserMain>,
+        element: <PrivetRoute><DashboardMain></DashboardMain></PrivetRoute>,
         children: [
             {
                 path: "",
-                element: <UserDashBoard></UserDashBoard>,
+                element: <PrivetRoute><Dashboard></Dashboard></PrivetRoute>,
+            },
+            {
+                path: "allUsers",
+                element: <PrivetRoute><AllUsers></AllUsers></PrivetRoute>,
             },
         ]
     }

@@ -1,11 +1,13 @@
 import { createContext, useEffect, useState } from "react"
 export const AuthContext = createContext(null);
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { app } from "../Firebase/Firebase";
+import useAxiosPublic from "../Hook/useAxiosPublic";
 function AuthProvider({ children }) {
     const auth = getAuth(app);
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const axiosPublic=useAxiosPublic();
 
 
     // create user
@@ -18,23 +20,42 @@ function AuthProvider({ children }) {
         setLoading(true);
         return signInWithEmailAndPassword(auth, email, password);
     }
-     // logOut
-    const userLogOut =()=>{
+    // logOut
+    const userLogOut = () => {
         setLoading(true);
         return signOut(auth);
     }
-
-    // save user
+    //updated profile
+    const updatedProfile = (name) => {
+        return updateProfile(auth.currentUser, {
+            displayName: name
+        })
+    }
+    //save user
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, currentUser => {
-            setLoading(false);
-            setUser(currentUser);
-            console.log('user', currentUser);
-        })
-        return unsubscribe;
-    }, [])
+            setUser(currentUser)
+            if (currentUser) {
+                const useInfo = { email: currentUser.email }
+                axiosPublic.post('/jwt', useInfo)
+                    .then(res => {
+                        if (res.data.token) {
+                            localStorage.setItem('access-token', res.data.token)
+                        }
+                    })
+            }
+            else {
+                localStorage.removeItem("access-token");
+            }
 
-   
+            setLoading(false)
+        });
+        return () => {
+            unsubscribe()
+        }
+    }, [axiosPublic]);
+
+
 
     const info = {
         createUser,
@@ -42,7 +63,8 @@ function AuthProvider({ children }) {
         loading,
         setLoading,
         signInUser,
-        userLogOut 
+        updatedProfile,
+        userLogOut
     }
     return (
         <AuthContext.Provider value={info}>

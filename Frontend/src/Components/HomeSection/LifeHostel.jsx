@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-function Overview() {
+function LifeHostel() {
     return (
         <section className="w-full  py-6 md:py-20">
             <div className="max-w-[1322px] mx-auto px-6 lg:px-0 flex flex-col lg:flex-row items-start lg:items-center gap-10">
@@ -72,4 +72,4 @@ function Overview() {
         </section>
     );
 }
-export default Overview;
+export default LifeHostel;

@@ -2,9 +2,9 @@ import ActivitySection from '../../../Components/HomeSection/ActivitySection'
 import Banner from '../../../Components/HomeSection/Banner'
 import ContactSection from '../../../Components/HomeSection/ContactSection'
 import HostelFacality from '../../../Components/HomeSection/HostelFacality'
-import Overview from '../../../Components/HomeSection/Overview'
 import FacilitiesSection from '../../../Components/HomeSection/FacilitiesSection'
 import { useEffect } from 'react'
+import LifeHostel from '../../../Components/HomeSection/LifeHostel'
 
 function Home() {
     useEffect(() => {
@@ -13,7 +13,7 @@ function Home() {
     return (
         <div>
             <Banner></Banner>
-            <Overview></Overview>
+            <LifeHostel></LifeHostel>
             <FacilitiesSection></FacilitiesSection>
             <ActivitySection></ActivitySection>
             <HostelFacality></HostelFacality>

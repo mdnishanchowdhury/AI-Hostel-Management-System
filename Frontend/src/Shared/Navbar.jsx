@@ -7,7 +7,7 @@ import useAuth from '../Hook/useAuth';
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { user, userLogOut, setLoading } = useAuth();
-  const navigate =useNavigate();
+  const navigate = useNavigate();
 
   // auth
   const handleLogOut = () => {
@@ -40,7 +40,11 @@ function Navbar() {
       <li><NavLink to="/services" className={getLinkClass} onClick={() => setIsOpen(false)}>Services</NavLink></li>
       <li><NavLink to="/contact" className={getLinkClass} onClick={() => setIsOpen(false)}>Contact</NavLink></li>
       <li><NavLink to="/about" className={getLinkClass} onClick={() => setIsOpen(false)}>About</NavLink></li>
-      <li><NavLink to="/dashboard" className={getLinkClass} onClick={() => setIsOpen(false)}>Dashboard</NavLink></li>
+      {
+        user && <>
+          <li><NavLink to="/dashboard" className={getLinkClass} onClick={() => setIsOpen(false)}>Dashboard</NavLink></li>
+        </>
+      }
     </>
   );
   // auth btn

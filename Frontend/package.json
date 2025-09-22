@@ -12,6 +12,8 @@
   "dependencies": {
     "@lucide/lab": "^0.1.2",
     "@tailwindcss/vite": "^4.1.13",
+    "@tanstack/react-query": "^5.89.0",
+    "axios": "^1.12.2",
     "firebase": "^12.3.0",
     "localforage": "^1.10.0",
     "lucide-react": "^0.544.0",
@@ -22,6 +24,7 @@
     "react-hook-form": "^7.63.0",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.9.1",
+    "recharts": "^3.2.1",
     "sort-by": "^1.2.0",
     "sweetalert2": "^11.23.0",
     "tailwindcss": "^4.1.13"

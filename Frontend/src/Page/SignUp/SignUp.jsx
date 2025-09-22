@@ -4,26 +4,43 @@ import { HiEye, HiEyeOff } from 'react-icons/hi';
 import useAuth from '../../Hook/useAuth';
 import Swal from 'sweetalert2'
 import { useNavigate } from 'react-router-dom';
+import useAxiosPublic from '../../Hook/useAxiosPublic';
 function SignUp() {
     const [showPassword, setShowPassword] = useState(false);
     const { register, handleSubmit, reset, formState: { errors } } = useForm();
-    const { createUser } = useAuth();
+    const { createUser,updatedProfile } = useAuth();
     const navigate = useNavigate();
+        const axiosPublic = useAxiosPublic();
 
-    const onSubmit = data => {
-        createUser(data.email, data.password)
-            .then(result => {
-                // console.log(result.user);
-                Swal.fire({
-                    position: "top-end",
-                    icon: "success",
-                    title: "Account created successfully!",
-                    showConfirmButton: false,
-                    timer: 1500
-                });
-                navigate('/login')
-            })
-    };
+      const onSubmit = data => {
+           createUser(data.email, data.password)
+               .then(() => {
+                   const userInfo = {
+                       name: data.name
+                   }
+                   axiosPublic.post('users', userInfo)
+                       .then(res => {
+                           if (res.data.insertedId) {
+                               updatedProfile(data.name)
+                                   .then(() => {
+                                       reset();
+                                       Swal.fire({
+                                           position: "top-end",
+                                           icon: "success",
+                                           title: "successfully SignUp",
+                                           showConfirmButton: false,
+                                           timer: 1500
+                                       });
+                                       navigate('/login')
+                                   })
+                           }
+                       })
+                       .catch(error => {
+                           console.log(error.message)
+                       })
+               })
+       };
+   
 
     useEffect(() => {
         document.title = 'Smart Hostel | SignUp';
@@ -47,16 +64,6 @@ function SignUp() {
                         {errors.name && <span className='text-red-600'>Name is required</span>}
                     </div>
 
-                    {/* Photo URL */}
-                    {/* <div className="form-control">
-                        <label className="label text-gray-600 font-poppins font-medium">Photo URL</label>
-                        <input
-                            type="text"
-                            {...register("PhotoURl")}
-                            placeholder="Photo URL"
-                            className="input input-bordered w-full rounded-lg focus:ring-2 focus:ring-red-600 focus:outline-none"
-                        />
-                    </div> */}
 
                     {/* Email */}
                     <div className="form-control">
