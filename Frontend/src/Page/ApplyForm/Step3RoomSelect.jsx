@@ -5,7 +5,8 @@ function Step3RoomSelect({ formData, handleChange, prevStep }) {
 
   const handleSubmit = async () => {
     try {
-      const res = await axiosSecure.post('/application', formData);
+      // const res = await axiosSecure.post('/application', formData);
+      const res = await axiosSecure.post('/applications', formData);
 
       if (res.data && res.data.insertedId) {
         Swal.fire({

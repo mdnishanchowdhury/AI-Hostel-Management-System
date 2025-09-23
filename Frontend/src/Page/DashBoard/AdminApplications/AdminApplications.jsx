@@ -19,7 +19,8 @@ function AdminApplications() {
     const handleAction = async (id, action) => {
         try {
             setLoadingActionId(id);
-            await axiosSecure.patch(`/application/${id}`, { action });
+            // await axiosSecure.patch(`/application/${id}`, { action });
+            await axiosSecure.patch(`/applications/${id}`, { action });
             await refetch();
         } catch (err) {
             console.error(err);
