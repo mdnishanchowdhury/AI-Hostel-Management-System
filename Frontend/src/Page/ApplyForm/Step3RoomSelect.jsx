@@ -1,16 +1,33 @@
 import useAxiosSecure from "../../Hook/useAxiosSecure";
-
+import Swal from 'sweetalert2'
 function Step3RoomSelect({ formData, handleChange, prevStep }) {
   const axiosSecure = useAxiosSecure();
-  const handleSubmit = () => {
-    // alert("Submitted! Data: " + JSON.stringify(formData, null, 2));
 
-    axiosSecure.post('/application', formData)
-      .then(res => {
-        console.log('apply form', res.data)
-      })
+  const handleSubmit = async () => {
+    try {
+      const res = await axiosSecure.post('/application', formData);
 
+      if (res.data && res.data.insertedId) {
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Your application has been submitted!",
+          showConfirmButton: false,
+          timer: 1500
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        position: "top-end",
+        icon: "error",
+        title: "Something went wrong!",
+        text: error.response?.data?.message || error.message,
+        showConfirmButton: true
+      });
+    }
   };
+
 
   return (
     <div className="space-y-6">
