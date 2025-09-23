@@ -37,15 +37,15 @@ async function run() {
 
         // Nodemailer setup
         const transporter = nodemailer.createTransport({
-          service: "gmail",
-          auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-          }
+            service: "gmail",
+            auth: {
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASS
+            }
         });
 
         // JWT token generation
-        app.post('/jwt', async (req, res) => {
+        app.post('/auth/jwt', async (req, res) => {
             const user = req.body;
             const token = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '1h' });
             res.send({ token });
@@ -108,19 +108,36 @@ async function run() {
             res.send({ admin: user?.role === 'admin' });
         });
 
-        // Application apis
-        app.post('/application', async (req, res) => {
-            const user = { ...req.body, status: 'pending' };
-            const result = await applicationCollection.insertOne(user);
-            res.send(result);
+        app.post('/applications', async (req, res) => {
+            try {
+                const { email, name, ...rest } = req.body;
+
+                if (!email || !name) {
+                    return res.status(400).send({ message: "Name and email are required" });
+                }
+                //  Check if email already applied
+                const existingApplication = await applicationCollection.findOne({ email });
+                if (existingApplication) {
+                    return res.status(400).send({ message: "You have already applied!" });
+                }
+
+                const application = { email, name, status: 'pending', ...rest };
+                const result = await applicationCollection.insertOne(application);
+
+                res.status(201).send(result);
+            } catch (error) {
+                console.error("Error creating application:", error);
+                res.status(500).send({ message: "Internal Server Error" });
+            }
         });
+
 
         app.get('/applications', verifyToken, verifyAdmin, async (req, res) => {
             const apps = await applicationCollection.find().toArray();
             res.send(apps);
         });
 
-        app.patch('/application/:id', verifyToken, verifyAdmin, async (req, res) => {
+        app.patch('/applications/:id', verifyToken, verifyAdmin, async (req, res) => {
             const id = req.params.id;
             const { action } = req.body; // accepted | rejected
             const filter = { _id: new ObjectId(id) };
@@ -155,7 +172,7 @@ async function run() {
             }
             res.send(result);
         });
-         // application end
+        // application end
 
         await client.db("admin").command({ ping: 1 });
         console.log("MongoDB connected successfully!");
