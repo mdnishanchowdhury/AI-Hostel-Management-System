@@ -5,7 +5,6 @@ require('dotenv').config();
 const port = process.env.PORT || 5000;
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-// const bcrypt = require('bcrypt');
 
 // Firebase Admin SDK
 var admin = require("firebase-admin");
@@ -34,6 +33,7 @@ async function run() {
         await client.connect();
         const usersCollection = client.db("smart_hostel").collection("users");
         const applicationCollection = client.db("smart_hostel").collection("application");
+        const roomsCollection = client.db("smart_hostel").collection("rooms");
 
         // Nodemailer setup
         const transporter = nodemailer.createTransport({
@@ -108,6 +108,7 @@ async function run() {
             res.send({ admin: user?.role === 'admin' });
         });
 
+        // application
         app.post('/applications', async (req, res) => {
             try {
                 const { email, name, ...rest } = req.body;
@@ -115,23 +116,70 @@ async function run() {
                 if (!email || !name) {
                     return res.status(400).send({ message: "Name and email are required" });
                 }
-                //  Check if email already applied
+
+                // Check if email already applied
                 const existingApplication = await applicationCollection.findOne({ email });
                 if (existingApplication) {
                     return res.status(400).send({ message: "You have already applied!" });
                 }
 
-                const application = { email, name, status: 'pending', ...rest };
-                const result = await applicationCollection.insertOne(application);
+                // Insert new application
+                const newApplication = { email, name, ...rest, createdAt: new Date() };
+                const result = await applicationCollection.insertOne(newApplication);
 
                 res.status(201).send(result);
             } catch (error) {
-                console.error("Error creating application:", error);
+                console.error(error);
+                res.status(500).send({ message: "Something went wrong" });
+            }
+        });
+
+        // Step 2
+        app.patch('/applications', async (req, res) => {
+            try {
+                const { email, name, ...rest } = req.body;
+
+                if (!email || !name) {
+                    return res.status(400).send({ message: "Name and email are required" });
+                }
+
+                // check if application exists
+                const existingApplication = await applicationCollection.findOne({ email });
+
+                if (!existingApplication) {
+                    return res.status(404).send({ message: "No application found for this email" });
+                }
+
+                // pending or accepted 
+                if (["pending", "accepted"].includes(existingApplication.status)) {
+                    return res.status(400).send({
+                        message: `Your application is already ${existingApplication.status}`
+                    });
+                }
+
+                // update status to pending
+                const updateDoc = {
+                    $set: {
+                        ...rest,
+                        name,
+                        status: "pending",
+                        updatedAt: new Date(),
+                    },
+                };
+
+                const result = await applicationCollection.updateOne(
+                    { email },
+                    updateDoc
+                );
+
+                res.status(200).send({ message: "Application moved to pending", result });
+            } catch (error) {
+                console.error("Error updating application:", error);
                 res.status(500).send({ message: "Internal Server Error" });
             }
         });
 
-
+        // application
         app.get('/applications', verifyToken, verifyAdmin, async (req, res) => {
             const apps = await applicationCollection.find().toArray();
             res.send(apps);
@@ -173,6 +221,102 @@ async function run() {
             res.send(result);
         });
         // application end
+
+        // room apis new
+        app.get('/rooms', async (req, res) => {
+            const result = await roomsCollection.find().toArray();
+            res.send(result);
+        })
+
+        app.patch('/rooms/book/:roomNumber', async (req, res) => {
+            const { roomNumber } = req.params;
+            const { seatNumber } = req.body;
+
+            try {
+                const result = await roomsCollection.updateOne(
+                    { roomNumber },
+                    { $push: { booked: seatNumber } }
+                );
+                res.send(result);
+            } catch (err) {
+                console.error(err);
+                res.status(500).send({ message: "Failed to book seat" });
+            }
+        });
+        // room end
+
+        // Suggest seat based on preferences
+        app.post("/applications/suggest", async (req, res) => {
+            try {
+                const { department, isQuiet, sleepTime, studyTime, isSmoker, cleanliness } = req.body;
+
+                // accepted applications
+                const applications = await applicationCollection.find({ status: "accepted" }).toArray();
+
+                let bestMatch = null;
+                let bestScore = -1;
+                const maxScore = 8; // total similarity score
+
+                applications.forEach((app) => {
+                    let score = 0;
+
+                    // Department match
+                    if (app.department === department) score += 2;
+
+                    if (app.isQuiet === isQuiet) score += 1;
+                    if (app.isSmoker === isSmoker) score += 2;
+
+                    const appSleepHour = parseInt(app.sleepTime.split(":")[0]);
+                    const formSleepHour = parseInt(sleepTime.split(":")[0]);
+                    const sleepDiff = Math.min(Math.abs(appSleepHour - formSleepHour), 4);
+                    score += Math.max(0, 1 - sleepDiff / 4);
+
+                    const appStudyHour = parseInt(app.studyTime.split(":")[0]);
+                    const formStudyHour = parseInt(studyTime.split(":")[0]);
+                    const studyDiff = Math.min(Math.abs(appStudyHour - formStudyHour), 4);
+                    score += Math.max(0, 1 - studyDiff / 4);
+
+                    const cleanDiff = Math.abs(parseInt(app.cleanliness) - parseInt(cleanliness));
+                    score += Math.max(0, 1 - cleanDiff / 4); // max 1 point
+
+                    if (score > bestScore) {
+                        bestScore = score;
+                        bestMatch = app;
+                    }
+                });
+
+                let suggestedSeat = null;
+                let matchPercent = 0;
+                let matchWith = null;
+
+                const MATCH_THRESHOLD = 0.5; // 50%
+
+                // Only suggest seat 
+                if (bestMatch && (bestScore / maxScore) >= MATCH_THRESHOLD) {
+                    const room = await roomsCollection.findOne({ roomNumber: bestMatch.roomNumber });
+                    if (room) {
+                        const availableSeat = room.capacity.find(seat => !room.booked.includes(seat));
+                        if (availableSeat) {
+                            suggestedSeat = `${room.roomNumber}-${availableSeat}`;
+                            matchPercent = Math.round((bestScore / maxScore) * 100);
+                            matchWith = bestMatch.name;
+                        }
+                    }
+                }
+
+                res.send({
+                    suggestedSeat,
+                    matchWith,
+                    matchPercent,
+                });
+
+            } catch (error) {
+                console.error(error);
+                res.status(500).send({ message: "Error suggesting seat" });
+            }
+        });
+        // Ai suggest end
+
 
         await client.db("admin").command({ ping: 1 });
         console.log("MongoDB connected successfully!");
