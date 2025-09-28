@@ -11,11 +11,11 @@ import Login from "../Page/Login/Login";
 import ApplyForm from "../Page/ApplyForm/ApplyForm";
 import DashboardMain from "../Layout/dashboardMain";
 import PrivetRoute from "./PrivetRoute";
-import AllUsers from "../Page/DashBoard/AllUsers/AllUsers";
-import Dashboard from "../Page/DashBoard/Dashboard/Dashboard";
-import AdminApplications from "../Page/DashBoard/AdminApplications/AdminApplications";
-
+import AllUsers from "../Page/AdminDashboard/AllUsers/AllUsers";
+import AdminApplications from "../Page/AdminDashboard/AdminApplications/AdminApplications";
+import DashboardSwitch from "../Page/DashboardSwitch/DashboardSwitch";
 export const router = createBrowserRouter([
+    
     {
         path: "/",
         element: <Main></Main>,
@@ -50,12 +50,12 @@ export const router = createBrowserRouter([
             },
             {
                 path: 'signUp',
-                element: <SignUp></SignUp>,
+                element: <PrivetRoute><SignUp></SignUp></PrivetRoute>,
             },
             {
                 path: 'apply',
                 element: <ApplyForm></ApplyForm>,
-            },
+            }
         ]
     },
     {
@@ -64,7 +64,9 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: "",
-                element: <PrivetRoute><Dashboard></Dashboard></PrivetRoute>,
+                element: <PrivetRoute>
+                    <DashboardSwitch></DashboardSwitch>
+                </PrivetRoute>,
             },
             {
                 path: "allUsers",
@@ -73,7 +75,7 @@ export const router = createBrowserRouter([
             {
                 path: "application",
                 element: <PrivetRoute><AdminApplications></AdminApplications></PrivetRoute>,
-            },
+            }
         ]
     }
 ]);

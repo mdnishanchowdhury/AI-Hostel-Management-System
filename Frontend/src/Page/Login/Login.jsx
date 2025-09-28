@@ -79,8 +79,8 @@ function Login() {
 
                 <p className="text-center text-gray-500 mt-4">
                     New here?{" "}
-                    <Link to="/signUp" className="text-[#f87171] font-poppins font-semibold hover:underline">
-                        Create a New Account
+                    <Link to="/apply" className="text-[#f87171] font-poppins font-semibold hover:underline">
+                        Hostel Registration Form
                     </Link>
                 </p>
             </div>

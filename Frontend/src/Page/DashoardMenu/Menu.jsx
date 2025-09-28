@@ -13,11 +13,11 @@ import {
   FaSignOutAlt,
   FaHistory,
 } from "react-icons/fa";
-import useAdmin from "../../../Hook/useAdmin";
+import useAdmin from "../../Hook/useAdmin";
 
 
 
-const Menu = () => {
+const DashoardMenu = () => {
   const location = useLocation();
   const [isAdmin, isAdminLoading] = useAdmin();
 
@@ -132,4 +132,4 @@ const Menu = () => {
   );
 };
 
-export default Menu;
+export default DashoardMenu;

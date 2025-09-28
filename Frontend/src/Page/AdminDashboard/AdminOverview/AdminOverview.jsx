@@ -41,7 +41,7 @@ const summary = {
 
 const COLORS = ["#34D399", "#F87171"];
 
-function Dashboard() {
+function AdminOverview() {
       useEffect(() => {
             document.title = "Smart Hostel | Dashboard";
         }, []);
@@ -164,4 +164,4 @@ function Dashboard() {
     );
 }
 
-export default Dashboard;
+export default AdminOverview;
