@@ -21,16 +21,16 @@ const createApplication = async (req, res) => {
             return res.status(400).send({ message: "You have already applied!" });
         }
 
-        const user = { email, name, status: 'pending', ...rest };
-        const result = await applicationCollection.insertOne(user);
-        res.status(201).send(result);
+        // Insert new application
+        const newApplication = { email, name, ...rest, createdAt: new Date() };
+        const result = await applicationCollection.insertOne(newApplication);
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send({ message: 'Internal Server Error' });
+        res.status(201).send(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Something went wrong" });
     }
 };
-
 
 // Get all applications
 const getApplications = async (req, res) => {
@@ -70,13 +70,25 @@ const updateApplication = async (req, res) => {
                 password: tempPassword,
                 displayName: application.name,
             });
-
             // Save to MongoDB users collection
             await usersCollection.insertOne({
                 name: application.name,
+                studentId: application.studentId,
+                department: application.department,
                 email: application.email,
+                phone: application.phone,
+                fatherName: application.fatherName,
+                fatherPhone: application.fatherPhone,
+                selectedSeat: application.selectedSeat,
+                address: application.address,
                 role: 'user',
             });
+            // Save to MongoDB users collection
+            // await usersCollection.insertOne({
+            //     name: application.name,
+            //     email: application.email,
+            //     role: 'user',
+            // });
 
             // Send email with credentials
             await transporter.sendMail({
@@ -166,4 +178,50 @@ const postApplicationSuggest = async (req, res) => {
     }
 };
 
-module.exports = { createApplication, getApplications, updateApplication, postApplicationSuggest };
+// application
+const applicationPatch = async (req, res) => {
+    try {
+        const { email, name, ...rest } = req.body;
+
+        if (!email || !name) {
+            return res.status(400).send({ message: "Name and email are required" });
+        }
+
+        // check if application exists
+        const existingApplication = await applicationCollection.findOne({ email });
+
+        if (!existingApplication) {
+            return res.status(404).send({ message: "No application found for this email" });
+        }
+
+        // pending or accepted 
+        if (["pending", "accepted"].includes(existingApplication.status)) {
+            return res.status(400).send({
+                message: `Your application is already ${existingApplication.status}`
+            });
+        }
+
+        // update status to pending
+        const updateDoc = {
+            $set: {
+                ...rest,
+                name,
+                status: "pending",
+                updatedAt: new Date(),
+            },
+        };
+
+        const result = await applicationCollection.updateOne(
+            { email },
+            updateDoc
+        );
+
+        res.status(200).send({ message: "Application moved to pending", result });
+    } catch (error) {
+        console.error("Error updating application:", error);
+        res.status(500).send({ message: "Internal Server Error" });
+    }
+};
+
+
+module.exports = { createApplication, getApplications, updateApplication, postApplicationSuggest, applicationPatch };
