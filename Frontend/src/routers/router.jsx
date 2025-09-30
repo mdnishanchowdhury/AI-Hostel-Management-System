@@ -14,6 +14,7 @@ import PrivetRoute from "./PrivetRoute";
 import AllUsers from "../Page/AdminDashboard/AllUsers/AllUsers";
 import AdminApplications from "../Page/AdminDashboard/AdminApplications/AdminApplications";
 import DashboardSwitch from "../Page/DashboardSwitch/DashboardSwitch";
+import MyRoom from "../Page/UserDashboard/MyRoon/MyRoon";
 export const router = createBrowserRouter([
     
     {
@@ -75,6 +76,10 @@ export const router = createBrowserRouter([
             {
                 path: "application",
                 element: <PrivetRoute><AdminApplications></AdminApplications></PrivetRoute>,
+            },
+            {
+                path: "myRoom",
+                element: <PrivetRoute><MyRoom></MyRoom></PrivetRoute>,
             }
         ]
     }

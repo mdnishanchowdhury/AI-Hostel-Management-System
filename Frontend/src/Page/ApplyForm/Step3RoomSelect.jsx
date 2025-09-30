@@ -15,7 +15,7 @@ function Step3RoomSelect({ formData, handleChange, prevStep }) {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        // Fetch rooms
+        // axios rooms
         const res = await axiosPublic.get("/rooms");
         const roomData = res.data.map((room) => ({
           ...room,
@@ -77,8 +77,8 @@ function Step3RoomSelect({ formData, handleChange, prevStep }) {
     try {
       const res = await axiosPublic.patch("/applications", {
         ...formData,
-        selectedSeat: finalSeat,
-        selectedRoom: roomNumber,
+        // selectedSeat: finalSeat,
+        // selectedRoom: roomNumber,
         roomNumber,
         seatNumber,
         status: "pending",

@@ -19,7 +19,7 @@ function ApplyForm() {
     studyTime: "day",
     isSmoker: "no",
     cleanliness: "3",
-    selectedRoom: "",
+    // selectedRoom: "",
   });
 
   const nextStep = () => setStep((prev) => prev + 1);

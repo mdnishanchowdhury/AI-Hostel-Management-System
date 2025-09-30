@@ -42,7 +42,7 @@ const DashoardMenu = () => {
     ]
     : [
       { path: `${base}`, label: "Dashboard", icon: <FaHome /> },
-      { path: `${base}/room`, label: "My Room", icon: <FaBed /> },
+      { path: `${base}/myRoom`, label: "My Room", icon: <FaBed /> },
       { path: `${base}/mealbooking`, label: "Meals", icon: <FaUtensils /> },
       { path: `${base}/payments`, label: "Make Payment", icon: <FaMoneyBill /> },
       { path: `${base}/payments/history`, label: "Payment History", icon: <FaHistory /> },
