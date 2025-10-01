@@ -1,6 +1,7 @@
 const { ObjectId } = require('mongodb');
 const usersCollection = require('../models/userModel');
 const applicationCollection = require('../models/applicationModel');
+const roomsCollection = require('../models/roomModel');
 
 // Get all users
 const getAllUsers = async (req, res) => {
@@ -42,22 +43,52 @@ const addUser = async (req, res) => {
 //  Delete user
 const deleteUser = async (req, res) => {
     try {
-        const id = req.params.id;
-        if (!ObjectId.isValid(id)) {
+        const userId = req.params.id;
+
+        if (!ObjectId.isValid(userId)) {
             return res.status(400).send({ message: "Invalid user ID" });
         }
 
-        const result = await usersCollection.deleteOne({ _id: new ObjectId(id) });
-        if (result.deletedCount === 0) {
+        // Find the user
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+        if (!user) {
             return res.status(404).send({ message: "User not found" });
         }
 
-        res.send(result);
+        const userEmail = user.email;
+
+        // Find all applications
+        const userApplications = await applicationCollection.find({ email: userEmail }).toArray();
+
+        // Loop Bed ID
+        for (const app of userApplications) {
+            const roomNumber = app.roomNumber;
+            const seatNumber = app.seatNumber;
+
+            // Remove booked bed
+            await roomsCollection.updateOne(
+                { roomNumber: roomNumber },
+                { $pull: { booked: seatNumber } }
+            );
+        }
+
+        // Delete user's applications
+        const deleteApplicationsResult = await applicationCollection.deleteMany({ email: userEmail });
+
+        // Delete the user
+        const deleteUserResult = await usersCollection.deleteOne({ _id: new ObjectId(userId) });
+
+        res.send({
+            message: "User, applications, and booked rooms updated successfully",
+            deletedUser: deleteUserResult,
+            deletedApplications: deleteApplicationsResult
+        });
     } catch (error) {
-        console.error("Error deleting user:", error);
+        console.error("Error deleting user cascade:", error);
         res.status(500).send({ message: "Internal Server Error" });
     }
 };
+
 
 //  Make user admin
 const makeAdmin = async (req, res) => {
