@@ -9,12 +9,12 @@ import Facilities from "../Page/Home/Facilities/Facilities";
 import SignUp from "../Page/SignUp/SignUp";
 import Login from "../Page/Login/Login";
 import ApplyForm from "../Page/ApplyForm/ApplyForm";
-import DashboardMain from "../Layout/dashboardMain";
 import PrivetRoute from "./PrivetRoute";
 import AllUsers from "../Page/AdminDashboard/AllUsers/AllUsers";
 import AdminApplications from "../Page/AdminDashboard/AdminApplications/AdminApplications";
 import DashboardSwitch from "../Page/DashboardSwitch/DashboardSwitch";
 import MyRoom from "../Page/UserDashboard/MyRoon/MyRoon";
+import DashboardMain from "../Layout/DashboardMain";
 export const router = createBrowserRouter([
     
     {
