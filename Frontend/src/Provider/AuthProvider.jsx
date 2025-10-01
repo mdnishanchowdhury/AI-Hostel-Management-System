@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react"
 export const AuthContext = createContext(null);
-import { createUserWithEmailAndPassword, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
 import { app } from "../Firebase/Firebase";
 import useAxiosPublic from "../Hook/useAxiosPublic";
 function AuthProvider({ children }) {
@@ -31,6 +31,13 @@ function AuthProvider({ children }) {
             displayName: name
         })
     }
+
+    // delete user
+    const deleteUserInfo = (user) => {
+        setLoading(true);
+        return deleteUser(user || auth.currentUser);
+    };
+
     //save user
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, currentUser => {
@@ -64,6 +71,7 @@ function AuthProvider({ children }) {
         setLoading,
         signInUser,
         updatedProfile,
+        deleteUserInfo,
         userLogOut
     }
     return (

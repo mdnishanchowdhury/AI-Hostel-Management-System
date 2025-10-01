@@ -15,6 +15,7 @@ import AdminApplications from "../Page/AdminDashboard/AdminApplications/AdminApp
 import DashboardSwitch from "../Page/DashboardSwitch/DashboardSwitch";
 import MyRoom from "../Page/UserDashboard/MyRoon/MyRoon";
 import DashboardMain from "../Layout/DashboardMain";
+import Profile from "../Page/UserDashboard/Profile/Profile";
 export const router = createBrowserRouter([
     
     {
@@ -80,6 +81,10 @@ export const router = createBrowserRouter([
             {
                 path: "myRoom",
                 element: <PrivetRoute><MyRoom></MyRoom></PrivetRoute>,
+            },
+            {
+                path: "profile",
+                element: <PrivetRoute><Profile></Profile></PrivetRoute>,
             }
         ]
     }
