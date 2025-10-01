@@ -63,9 +63,11 @@ function AllUsers() {
       if (result.isConfirmed) {
         try {
           const res = await axiosSecure.delete(`/users/${user._id}`);
-          if (res.data.deletedCount > 0) {
+          if (res.data.deletedUser?.deletedCount > 0) {
             refetch();
             Swal.fire("Deleted!", "User has been deleted.", "success");
+          } else {
+            Swal.fire("Error!", "Delete failed.", "error");
           }
         } catch (err) {
           console.error(err);
