@@ -25,11 +25,13 @@ const DashoardMenu = ({ onLinkClick }) => {
         { path: `${base}/allUsers`, label: "All Users", icon: <FaCog /> },
         { path: `${base}/autobooking`, label: "Auto booking", icon: <FaCog /> },
         { path: `${base}/mealsBookList`, label: "Daily Booked Meals", icon: <FaCog /> },
+        { path: `${base}/mealsHistory`, label: "Meals History", icon: <FaCog /> },
       ]
     : [
         { path: `${base}`, label: "Dashboard", icon: <FaHome /> },
         { path: `${base}/myRoom`, label: "My Room", icon: <FaBed /> },
         { path: `${base}/mealbooking`, label: "Meals", icon: <FaUtensils /> },
+        { path: `${base}/UserMealsHistory`, label: "Meals History", icon: <FaUtensils /> },
         { path: `${base}/payments`, label: "Make Payment", icon: <FaMoneyBill /> },
         { path: `${base}/payments/history`, label: "Payment History", icon: <FaHistory /> },
         { path: `${base}/attendance`, label: "Attendance", icon: <FaClipboardCheck /> },

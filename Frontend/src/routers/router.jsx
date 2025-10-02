@@ -20,6 +20,8 @@ import Settings from "../Page/UserDashboard/Settings/Settings";
 import AutoBookedMeals from "../Page/AdminDashboard/AutoBookedMeals.jsx/AutoBookedMeals";
 import MealsBooking from "../Page/UserDashboard/MealsBooking/MealsBooking";
 import MealsBookList from "../Page/AdminDashboard/MealsBookList/MealsBookList";
+import AdminMealsHistory from "../Page/AdminDashboard/AdminMealsHistory/AdminMealsHistory";
+import UserMealsHistory from "../Page/UserDashboard/UserMealsHistory/UserMealsHistory";
 export const router = createBrowserRouter([
     
     {
@@ -105,6 +107,14 @@ export const router = createBrowserRouter([
             {
                 path: "mealsBookList",
                 element: <PrivetRoute><MealsBookList></MealsBookList></PrivetRoute>,
+            },
+            {
+                path: "mealsHistory",
+                element: <PrivetRoute><AdminMealsHistory></AdminMealsHistory></PrivetRoute>,
+            },
+            {
+                path: "UserMealsHistory",
+                element: <PrivetRoute><UserMealsHistory></UserMealsHistory></PrivetRoute>,
             }
         ]
     }
