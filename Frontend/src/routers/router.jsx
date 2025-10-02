@@ -16,6 +16,10 @@ import DashboardSwitch from "../Page/DashboardSwitch/DashboardSwitch";
 import MyRoom from "../Page/UserDashboard/MyRoon/MyRoon";
 import DashboardMain from "../Layout/DashboardMain";
 import Profile from "../Page/UserDashboard/Profile/Profile";
+import Settings from "../Page/UserDashboard/Settings/Settings";
+import AutoBookedMeals from "../Page/AdminDashboard/AutoBookedMeals.jsx/AutoBookedMeals";
+import MealsBooking from "../Page/UserDashboard/MealsBooking/MealsBooking";
+import MealsBookList from "../Page/AdminDashboard/MealsBookList/MealsBookList";
 export const router = createBrowserRouter([
     
     {
@@ -85,6 +89,22 @@ export const router = createBrowserRouter([
             {
                 path: "profile",
                 element: <PrivetRoute><Profile></Profile></PrivetRoute>,
+            },
+            {
+                path: "settings",
+                element: <PrivetRoute><Settings></Settings></PrivetRoute>,
+            },
+            {
+                path: "mealbooking",
+                element: <PrivetRoute><MealsBooking></MealsBooking></PrivetRoute>,
+            },
+            {
+                path: "autobooking",
+                element: <PrivetRoute><AutoBookedMeals></AutoBookedMeals></PrivetRoute>,
+            },
+            {
+                path: "mealsBookList",
+                element: <PrivetRoute><MealsBookList></MealsBookList></PrivetRoute>,
             }
         ]
     }

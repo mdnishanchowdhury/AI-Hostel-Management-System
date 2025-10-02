@@ -1,63 +1,66 @@
-import { useState, useEffect } from "react";
 import { FaBed, FaBuilding, FaMapMarkerAlt, FaUserFriends, FaWifi, FaBath, FaFan, FaChair } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../Hook/useAxiosSecure";
 import useAuth from "../../../Hook/useAuth";
+import MenuLoading from "../../../Components/Loading/MenuLoading";
 
 function MyRoom() {
   const secureAxios = useAxiosSecure();
   const { user } = useAuth();
 
-  const [userInfo, setUserInfo] = useState(null);
-  const [rooms, setRooms] = useState([]);
-  const [roomInfo, setRoomInfo] = useState(null);
+  //  Fetch user info
+  const { data: userInfo, isLoading: userLoading } = useQuery({
+    queryKey: ["userInfo", user?.email],
+    queryFn: async () => {
+      const res = await secureAxios.get(`/users/room?email=${user.email}`);
+      return res.data;
+    },
+    enabled: !!user?.email,
+  });
 
-  // Fetch user info & rooms
-  useEffect(() => {
-    if (!user?.email) return;
+  // Fetch all rooms
+  const { data: rooms = [], isLoading: roomLoading } = useQuery({
+    queryKey: ["rooms"],
+    queryFn: async () => {
+      const res = await secureAxios.get("/rooms");
+      return res.data;
+    },
+  });
 
-    secureAxios
-      .get(`/users/room?email=${user.email}`)
-      .then((res) => setUserInfo(res.data))
-      .catch((err) => console.error("Failed to fetch user info:", err));
-
-    secureAxios
-      .get("/rooms")
-      .then((res) => setRooms(res.data))
-      .catch((err) => console.error("Failed to fetch rooms:", err));
-  }, [user, secureAxios]);
+  // Loading state
+  if (userLoading || roomLoading) {
+    return <MenuLoading></MenuLoading>
+  }
 
   // Match room info
-  useEffect(() => {
-    if (!userInfo || !rooms.length) return;
-
+  let roomInfo = null;
+  if (userInfo && rooms.length) {
     const seat = userInfo.selectedSeat;
-    if (!seat) return;
+    if (seat) {
+      const [roomNumber, bedNumber] = seat.split("-Bed-");
+      const room = rooms.find((r) => r.roomNumber === roomNumber);
 
-    const [roomNumber, bedNumber] = seat.split("-Bed-");
-    const room = rooms.find((r) => r.roomNumber === roomNumber);
-
-    if (room) {
-      const roommates = room.booked.map((b, idx) => `User ${idx + 1}`);
-
-      setRoomInfo({
-        building: room.hostel,
-        location: userInfo.address,
-        roomNumber: room.roomNumber,
-        bedCount: room.capacity.length,
-        bedNumber: `Bed-${bedNumber}`,
-        roommates,
-        amenities: ["WiFi", "Fan", "Chair/Table"],
-      });
+      if (room) {
+        const roommates = room.booked.map((b, idx) => `User ${idx + 1}`);
+        roomInfo = {
+          building: room.hostel,
+          location: userInfo.address,
+          roomNumber: room.roomNumber,
+          bedCount: room.capacity.length,
+          bedNumber: `Bed-${bedNumber}`,
+          roommates,
+          amenities: ["WiFi", "Fan", "Chair/Table"],
+        };
+      }
     }
-  }, [userInfo, rooms]);
+  }
 
+  // roomInfo 
   if (!roomInfo) {
     return (
-      <div className="w-11/12 mx-auto p-6 max-w-4xl">
-        <p className="text-center text-lg text-gray-500 animate-pulse">
-          Loading room info...
-        </p>
+      <div className="flex items-center justify-center h-[70vh]">
+        <p className="text-gray-500 text-lg">No room information available</p>
       </div>
     );
   }
@@ -78,52 +81,16 @@ function MyRoom() {
         My Room Information
       </motion.h1>
 
-      <motion.div
-        className="space-y-10"
-        initial="hidden"
-        animate="visible"
-        variants={{
-          hidden: { opacity: 0 },
-          visible: {
-            opacity: 1,
-            transition: { staggerChildren: 0.2 },
-          },
-        }}
-      >
-        {/* Room Details */}
-        <motion.div
-          className="grid md:grid-cols-2 gap-10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
+      {/* Room Info */}
+      <motion.div className="space-y-10">
+        <div className="grid md:grid-cols-2 gap-10">
           <div className="space-y-5">
             {[
-              {
-                icon: <FaBuilding className="text-indigo-600 text-2xl" />,
-                label: "Building",
-                value: roomInfo.building,
-              },
-              {
-                icon: <FaMapMarkerAlt className="text-red-500 text-2xl" />,
-                label: "Location",
-                value: roomInfo.location,
-              },
-              {
-                icon: <FaBed className="text-green-600 text-2xl" />,
-                label: "Room Number",
-                value: roomInfo.roomNumber,
-              },
-              {
-                icon: <FaBed className="text-blue-600 text-2xl" />,
-                label: "Your Bed",
-                value: roomInfo.bedNumber,
-              },
-              {
-                icon: <FaUserFriends className="text-yellow-500 text-2xl" />,
-                label: "Total Beds",
-                value: roomInfo.bedCount,
-              },
+              { icon: <FaBuilding className="text-indigo-600 text-2xl" />, label: "Building", value: roomInfo.building },
+              { icon: <FaMapMarkerAlt className="text-red-500 text-2xl" />, label: "Location", value: roomInfo.location },
+              { icon: <FaBed className="text-green-600 text-2xl" />, label: "Room Number", value: roomInfo.roomNumber },
+              { icon: <FaBed className="text-blue-600 text-2xl" />, label: "Your Bed", value: roomInfo.bedNumber },
+              { icon: <FaUserFriends className="text-yellow-500 text-2xl" />, label: "Total Beds", value: roomInfo.bedCount },
             ].map((item, i) => (
               <motion.div
                 key={i}
@@ -141,69 +108,48 @@ function MyRoom() {
           </div>
 
           {/* Roommates */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
+          <div>
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 flex items-center gap-3">
               <FaUserFriends className="text-pink-600 text-3xl" /> Roommates
             </h2>
             <ul className="list-disc list-inside text-gray-600 space-y-2 text-lg">
-              {
-                roomInfo.roommates.map((mate, idx) => (
-                  <li
-                    key={idx}
-                    className="hover:text-pink-600 transition duration-200"
-                  >
-                    {mate}
-                  </li>
-                ))
-              }
+              {roomInfo.roommates.map((mate, idx) => (
+                <li key={idx} className="hover:text-pink-600 transition duration-200">
+                  {mate}
+                </li>
+              ))}
             </ul>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
 
         {/* Amenities */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-        >
+        <div>
           <h2 className="text-2xl font-semibold mb-5 text-gray-800 flex items-center gap-3">
             Amenities
           </h2>
           <div className="flex flex-wrap gap-5">
-            {
-              roomInfo.amenities.includes("WiFi") && (
-                <span className="flex items-center gap-2 px-4 py-2 border border-indigo-600 text-indigo-600 rounded-full text-lg font-semibold cursor-default hover:bg-indigo-600 hover:text-white transition">
-                  <FaWifi /> WiFi
-                </span>
-              )
-            }
-            {
-              roomInfo.amenities.includes("Attached Bathroom") && (
-                <span className="flex items-center gap-2 px-4 py-2 border border-red-600 text-red-600 rounded-full text-lg font-semibold cursor-default hover:bg-red-600 hover:text-white transition">
-                  <FaBath /> Attached Bath
-                </span>
-              )
-            }
-            {
-              roomInfo.amenities.includes("Fan") && (
-                <span className="flex items-center gap-2 px-4 py-2 border border-green-600 text-green-600 rounded-full text-lg font-semibold cursor-default hover:bg-green-600 hover:text-white transition">
-                  <FaFan /> Fan
-                </span>
-              )
-            }
-            {
-              roomInfo.amenities.includes("Chair/Table") && (
-                <span className="flex items-center gap-2 px-4 py-2 border border-yellow-600 text-yellow-600 rounded-full text-lg font-semibold cursor-default hover:bg-yellow-600 hover:text-white transition">
-                  <FaChair /> Study Set
-                </span>
-              )
-            }
+            {roomInfo.amenities.includes("WiFi") && (
+              <span className="flex items-center gap-2 px-4 py-2 border border-indigo-600 text-indigo-600 rounded-full text-lg font-semibold hover:bg-indigo-600 hover:text-white transition">
+                <FaWifi /> WiFi
+              </span>
+            )}
+            {roomInfo.amenities.includes("Attached Bathroom") && (
+              <span className="flex items-center gap-2 px-4 py-2 border border-red-600 text-red-600 rounded-full text-lg font-semibold hover:bg-red-600 hover:text-white transition">
+                <FaBath /> Attached Bath
+              </span>
+            )}
+            {roomInfo.amenities.includes("Fan") && (
+              <span className="flex items-center gap-2 px-4 py-2 border border-green-600 text-green-600 rounded-full text-lg font-semibold hover:bg-green-600 hover:text-white transition">
+                <FaFan /> Fan
+              </span>
+            )}
+            {roomInfo.amenities.includes("Chair/Table") && (
+              <span className="flex items-center gap-2 px-4 py-2 border border-yellow-600 text-yellow-600 rounded-full text-lg font-semibold hover:bg-yellow-600 hover:text-white transition">
+                <FaChair /> Study Set
+              </span>
+            )}
           </div>
-        </motion.div>
+        </div>
       </motion.div>
     </motion.div>
   );

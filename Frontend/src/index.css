@@ -8,6 +8,9 @@
   --font-poppins: "Poppins", sans-serif; 
   --font-roboto: "Roboto", sans-serif; 
 }
-/* body{
-  background-color: white;
-} */
+
+body {
+  background-color: white; 
+  color: black;         
+}
+

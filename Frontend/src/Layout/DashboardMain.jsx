@@ -9,22 +9,24 @@ function DashboardMain() {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Mobile Top Navbar */}
-      <div className="md:hidden fixed top-0 left-0 w-full z-50 bg-white/5 backdrop-blur-md p-4 shadow-sm flex items-center justify-between">
-        <h2 className="text-2xl font-bold font-poppins uppercase text-black">
+      <div className="md:hidden fixed top-0 left-0 w-full z-50 bg-white/10 backdrop-blur-md p-4 shadow-sm flex items-center justify-between">
+        <h2 className="text-2xl font-bold font-poppins uppercase text-green-500">
           Smart Hostel
         </h2>
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? (
-            <FaTimes className="w-6 h-6" />
+            <FaTimes className="w-6 h-6 text-green-500" />
           ) : (
-            <FaBars className="w-6 h-6" />
+            <FaBars className="w-6 h-6 text-green-500" />
           )}
         </button>
       </div>
 
       {/* Sidebar / Mobile Menu */}
       <div
-        className={`fixed md:relative z-40 top-0 left-0 h-full md:h-auto w-64 bg-gradient-to-b from-slate-900 to-slate-800 transform transition-transform duration-300
+        className={`fixed md:relative z-40 top-0 left-0 h-full md:h-auto w-64 
+          bg-gradient-to-b from-gray-900 to-gray-800 text-white
+          transform transition-transform duration-300
           ${mobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}
       >
         <DashoardMenu onLinkClick={() => setMobileMenuOpen(false)} />

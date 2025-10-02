@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import useAxiosSecure from "../../../Hook/useAxiosSecure";
 import useAuth from "../../../Hook/useAuth";
+import MenuLoading from "../../../Components/Loading/MenuLoading";
 
 function Profile() {
     const { user } = useAuth();
@@ -18,7 +19,7 @@ function Profile() {
     });
 
     if (isLoading)
-        return <div className="text-center py-10">Loading profile...</div>;
+        return <MenuLoading></MenuLoading>
     if (error)
         return (
             <div className="text-center py-10 text-red-500">

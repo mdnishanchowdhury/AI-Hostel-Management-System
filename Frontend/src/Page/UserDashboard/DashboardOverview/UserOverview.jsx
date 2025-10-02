@@ -17,7 +17,6 @@ import {
   FaChartLine,
   FaPizzaSlice,
   FaUserCheck,
-  FaCalendarCheck,
   FaWallet,
   FaBed,
 } from "react-icons/fa";

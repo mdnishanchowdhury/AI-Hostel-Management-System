@@ -3,6 +3,7 @@ import { MdDelete } from 'react-icons/md';
 import { FaUsers } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import useAxiosSecure from '../../../Hook/useAxiosSecure';
+import MenuLoading from '../../../Components/Loading/MenuLoading';
 
 function AllUsers() {
   const axiosSecure = useAxiosSecure();
@@ -18,11 +19,7 @@ function AllUsers() {
 
   // Loading state
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center py-20 w-full">
-        <span className="loading loading-spinner loading-xl"></span>
-      </div>
-    );
+    return <MenuLoading></MenuLoading>
   }
 
   // make admin handler
@@ -85,7 +82,7 @@ function AllUsers() {
 
       <div className="overflow-x-auto mt-4">
         <table className="table">
-          <thead className="bg-[#f87171] text-white">
+          <thead className="bg-green-600/30 text-black">
             <tr>
               <th>#</th>
               <th>USER NAME</th>

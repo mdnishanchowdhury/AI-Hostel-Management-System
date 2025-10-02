@@ -1,6 +1,7 @@
 import useAxiosSecure from "../../../Hook/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import MenuLoading from "../../../Components/Loading/MenuLoading";
 
 function AdminApplications() {
     const axiosSecure = useAxiosSecure();
@@ -30,15 +31,11 @@ function AdminApplications() {
     };
 
     if (isLoading) {
-        return (
-            <div className="flex justify-center items-center py-20 w-full">
-                <span className="loading loading-spinner loading-xl"></span>
-            </div>
-        );
+        return <MenuLoading></MenuLoading>
     }
 
     return (
-        <div className="w-full mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
+        <div className="w-full mx-auto p-6 bg-gradient-to-r from-purple-50 to-blue-50 shadow-lg rounded-lg shadow-lg mt-10">
             <h1 className="text-2xl font-bold mb-6">Admin - Hostel Applications</h1>
 
             {applications.length === 0 ? (
