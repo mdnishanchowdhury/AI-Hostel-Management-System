@@ -54,7 +54,7 @@ export default function MealsBooking({ email, token }) {
         });
     };
 
-    // Confirm bookings (update backend)
+    // Confirm bookings
     const confirmBookings = async (dayIdx) => {
         try {
             const day = bookings[dayIdx];
@@ -62,7 +62,6 @@ export default function MealsBooking({ email, token }) {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            // check backend response
             console.log("Update Response:", res.data);
 
             if (res.data && res.data.date) {
