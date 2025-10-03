@@ -51,7 +51,7 @@ export default function UserMealsHistory() {
             loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
           }`}
         >
-          {loading ? "Loading..." : "Fetch"}
+          {loading ? "Loading..." : "Search"}
         </button>
       </div>
 
