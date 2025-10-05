@@ -8,6 +8,7 @@ const userRoutes = require('./routes/userRoutes');
 const applicationRoutes = require('./routes/applicationRoutes');
 const roomRouters = require('./routes/roomRouters');
 const mealBookingRoutes = require('./routes/mealBookingRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -28,6 +29,9 @@ app.use('/rooms', roomRouters);
 
 // Routes
 app.use("/bookings", mealBookingRoutes);
+
+// payments
+app.use('/payments', paymentRoutes);
 
 app.get('/', (req, res) => res.send('Hello World!'));
 
