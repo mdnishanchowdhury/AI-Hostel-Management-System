@@ -19,9 +19,13 @@ import Profile from "../Page/UserDashboard/Profile/Profile";
 import Settings from "../Page/UserDashboard/Settings/Settings";
 import AutoBookedMeals from "../Page/AdminDashboard/AutoBookedMeals.jsx/AutoBookedMeals";
 import MealsBooking from "../Page/UserDashboard/MealsBooking/MealsBooking";
-import MealsBookList from "../Page/AdminDashboard/MealsBookList/MealsBookList";
-import AdminMealsHistory from "../Page/AdminDashboard/AdminMealsHistory/AdminMealsHistory";
+import AdminMealsHistory from "../Page/AdminDashboard/MealsHistory/AdminMealsHistory";
 import UserMealsHistory from "../Page/UserDashboard/UserMealsHistory/UserMealsHistory";
+import UserPayment from "../Page/UserDashboard/UserPayment.jsx/UserPayment";
+import UserPaymentHistory from "../Page/UserDashboard/UserPaymentHistory/UserPaymentHistory";
+import AdminPaymentsHistory from "../Page/AdminDashboard/PaymentsHistory/AdminPaymentsHistory";
+import DailyBookedMeals from "../Page/AdminDashboard/DailyBookedMeals/DailyBookedMeals";
+
 export const router = createBrowserRouter([
     
     {
@@ -105,16 +109,28 @@ export const router = createBrowserRouter([
                 element: <PrivetRoute><AutoBookedMeals></AutoBookedMeals></PrivetRoute>,
             },
             {
-                path: "mealsBookList",
-                element: <PrivetRoute><MealsBookList></MealsBookList></PrivetRoute>,
+                path: "dailyBookedMeals",
+                element: <PrivetRoute><DailyBookedMeals></DailyBookedMeals></PrivetRoute>,
             },
             {
                 path: "mealsHistory",
                 element: <PrivetRoute><AdminMealsHistory></AdminMealsHistory></PrivetRoute>,
             },
             {
-                path: "UserMealsHistory",
+                path: "history",
                 element: <PrivetRoute><UserMealsHistory></UserMealsHistory></PrivetRoute>,
+            },
+            {
+                path: "payments",
+                element: <PrivetRoute><UserPayment></UserPayment></PrivetRoute>,
+            },
+            {
+                path: "payments/History",
+                element: <PrivetRoute><UserPaymentHistory></UserPaymentHistory></PrivetRoute>,
+            },
+            {
+                path: "admin/payments/History",
+                element: <PrivetRoute><AdminPaymentsHistory></AdminPaymentsHistory></PrivetRoute>,
             }
         ]
     }

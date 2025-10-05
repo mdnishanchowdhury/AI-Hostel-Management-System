@@ -24,14 +24,15 @@ const DashoardMenu = ({ onLinkClick }) => {
         { path: `${base}/application`, label: "Application", icon: <FaHome /> },
         { path: `${base}/allUsers`, label: "All Users", icon: <FaCog /> },
         { path: `${base}/autobooking`, label: "Auto booking", icon: <FaCog /> },
-        { path: `${base}/mealsBookList`, label: "Daily Booked Meals", icon: <FaCog /> },
+        { path: `${base}/dailyBookedMeals`, label: "Daily Booked Meals", icon: <FaCog /> },
         { path: `${base}/mealsHistory`, label: "Meals History", icon: <FaCog /> },
+        { path: `${base}/admin/payments/History`, label: "Payment History", icon: <FaCog /> },
       ]
     : [
         { path: `${base}`, label: "Dashboard", icon: <FaHome /> },
         { path: `${base}/myRoom`, label: "My Room", icon: <FaBed /> },
         { path: `${base}/mealbooking`, label: "Meals", icon: <FaUtensils /> },
-        { path: `${base}/UserMealsHistory`, label: "Meals History", icon: <FaUtensils /> },
+        { path: `${base}/history`, label: "Meals History", icon: <FaUtensils /> },
         { path: `${base}/payments`, label: "Make Payment", icon: <FaMoneyBill /> },
         { path: `${base}/payments/history`, label: "Payment History", icon: <FaHistory /> },
         { path: `${base}/attendance`, label: "Attendance", icon: <FaClipboardCheck /> },
@@ -49,8 +50,8 @@ const DashoardMenu = ({ onLinkClick }) => {
       {/* Menu Items */}
       <ul className="flex-1 px-3 py-4 space-y-2">
         {menuItems.map(({ path, label, icon }) => {
-          const isActive =
-            path === `${base}` ? location.pathname === path : location.pathname.startsWith(path);
+          // ✅ Fixed: only exact active path is highlighted
+          const isActive = location.pathname === path;
 
           return (
             <li key={path}>
