@@ -64,13 +64,12 @@ const updateApplication = async (req, res) => {
 
             const tempPassword = generatePassword();
 
-            // Firebase Auth create user
             await admin.auth().createUser({
                 email: application.email,
                 password: tempPassword,
                 displayName: application.name,
             });
-            // Save to MongoDB users collection
+
             await usersCollection.insertOne({
                 name: application.name,
                 studentId: application.studentId,
@@ -83,14 +82,7 @@ const updateApplication = async (req, res) => {
                 address: application.address,
                 role: 'user',
             });
-            // Save to MongoDB users collection
-            // await usersCollection.insertOne({
-            //     name: application.name,
-            //     email: application.email,
-            //     role: 'user',
-            // });
-
-            // Send email with credentials
+            
             await transporter.sendMail({
                 from: `"Smart Hostel" <${process.env.EMAIL_USER}>`,
                 to: application.email,
