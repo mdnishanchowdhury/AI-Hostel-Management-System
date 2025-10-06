@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 import useAxiosPublic from "../../Hook/useAxiosPublic";
 import { MdOutlineStar } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 function Step3RoomSelect({ formData, handleChange, prevStep }) {
   const axiosPublic = useAxiosPublic();
@@ -10,7 +11,8 @@ function Step3RoomSelect({ formData, handleChange, prevStep }) {
   const [suggestedSeat, setSuggestedSeat] = useState("");
   const [matchPercent, setMatchPercent] = useState(null);
   const [matchWith, setMatchWith] = useState(null);
-  const MATCH_THRESHOLD = 50; // % threshold
+  const MATCH_THRESHOLD = 50;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -54,6 +56,7 @@ function Step3RoomSelect({ formData, handleChange, prevStep }) {
 
   const handleSubmit = async () => {
     if (!formData.selectedSeat && (matchPercent < MATCH_THRESHOLD || !suggestedSeat)) {
+      navigate('/')
       Swal.fire({
         icon: "warning",
         title: "Please select a seat",
@@ -77,8 +80,6 @@ function Step3RoomSelect({ formData, handleChange, prevStep }) {
     try {
       const res = await axiosPublic.patch("/applications", {
         ...formData,
-        // selectedSeat: finalSeat,
-        // selectedRoom: roomNumber,
         roomNumber,
         seatNumber,
         status: "pending",

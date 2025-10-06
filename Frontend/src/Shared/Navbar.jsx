@@ -25,7 +25,7 @@ function Navbar() {
       })
   }
 
-  // btn css
+  // batton css
   const getLinkClass = ({ isActive }) =>
     "relative font-poppins pb-2 font-medium transition-colors " +
     (isActive

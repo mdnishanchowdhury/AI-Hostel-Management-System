@@ -1,26 +1,30 @@
-import { Link, useLocation } from "react-router-dom";
-import {
-  FaHome,
-  FaBed,
-  FaUtensils,
-  FaMoneyBill,
-  FaClipboardCheck,
-  FaUser,
-  FaCog,
-  FaSignOutAlt,
-  FaHistory,
-  FaBookOpen,
-  FaUsers,
-  FaCalendarAlt,
-  FaTachometerAlt,
-} from "react-icons/fa";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {FaHome,FaBed,FaUtensils,FaMoneyBill,FaUser,FaCog,FaSignOutAlt,FaHistory,FaBookOpen,FaUsers,FaCalendarAlt,
+  FaTachometerAlt} from "react-icons/fa";
 import useAdmin from "../../Hook/useAdmin";
+import useAuth from "../../Hook/useAuth";
+import Swal from "sweetalert2";
 
 const DashoardMenu = ({ onLinkClick }) => {
   const location = useLocation();
   const [isAdmin] = useAdmin();
-
+   const navigate = useNavigate();
   const base = "/dashboard";
+  const {userLogOut} = useAuth();
+
+   const handleLogOut = () => {
+    userLogOut()
+      .then(() => {
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: "Logged out successfully!",
+          showConfirmButton: false,
+          timer: 1500
+        });
+        navigate('/login')
+      })
+  }
 
   const menuItems = isAdmin
     ? [
@@ -34,7 +38,8 @@ const DashoardMenu = ({ onLinkClick }) => {
       { path: `${base}/admin/payments/History`, label: "Payment History", icon: <FaMoneyBill /> },
     ]
     : [
-      { path: `${base}`, label: "Dashboard", icon: <FaHome /> },
+      { path: '/', label: "Home", icon: <FaHome /> },
+      { path: `${base}`, label: "Dashboard", icon: <FaTachometerAlt /> },
       { path: `${base}/myRoom`, label: "My Room", icon: <FaBed /> },
       { path: `${base}/mealbooking`, label: "Meals", icon: <FaUtensils /> },
       { path: `${base}/history`, label: "Meals History", icon: <FaHistory /> },
@@ -76,7 +81,7 @@ const DashoardMenu = ({ onLinkClick }) => {
         <li>
           <Link
             to="/login"
-            onClick={onLinkClick}
+            onClick={handleLogOut}
             className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-500 hover:text-white hover:bg-red-600 transition-all duration-300"
           >
             <FaSignOutAlt className="text-lg" />
