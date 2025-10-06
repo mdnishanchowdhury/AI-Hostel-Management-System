@@ -4,12 +4,12 @@ import useAxiosSecure from "../../../Hook/useAxiosSecure";
 import Swal from "sweetalert2";
 
 const mealTypes = [
-    { type: "Breakfast", price: 50 },
-    { type: "Lunch", price: 100 },
-    { type: "Dinner", price: 120 },
+    { type: "Breakfast", price: 50, color: "bg-blue-500" },
+    { type: "Lunch", price: 100, color: "bg-green-500" },
+    { type: "Dinner", price: 120, color: "bg-orange-500" },
 ];
 
-export default function MealsBooking({ email, token }) {
+function MealsBooking({ token }) {
     const today = new Date();
     const [bookings, setBookings] = useState([]);
     const [bookedData, setBookedData] = useState(null);
@@ -28,10 +28,8 @@ export default function MealsBooking({ email, token }) {
         }
     };
 
-
     useEffect(() => { fetchBookings(); }, []);
 
-    // Toggle meals only for next day
     const toggleMeal = (dayIdx, mealIdx) => {
         const nextDay = new Date(today);
         nextDay.setDate(today.getDate() + 1);
@@ -54,15 +52,12 @@ export default function MealsBooking({ email, token }) {
         });
     };
 
-    // Confirm bookings
     const confirmBookings = async (dayIdx) => {
         try {
             const day = bookings[dayIdx];
             const res = await axiosSecure.patch(`/bookings/${day._id}`, { meals: day.meals }, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-
-            console.log("Update Response:", res.data);
 
             if (res.data && res.data.date) {
                 setBookedData({
@@ -80,7 +75,7 @@ export default function MealsBooking({ email, token }) {
                 timer: 1500
             });
         } catch (err) {
-            console.error("Meal update error:", err.response?.data || err.message);
+            console.error(err);
             Swal.fire({
                 icon: "error",
                 title: "Oops...",
@@ -89,40 +84,51 @@ export default function MealsBooking({ email, token }) {
         }
     };
 
+    // Summary data for cards
+    const totalMeals = bookings.reduce(
+        (sum, d) => sum + d.meals.filter(m => m.booked).length,
+        0
+    );
+
+    const summary = {
+        Breakfast: bookings.reduce((sum, d) => sum + d.meals.filter(m => m.type === "Breakfast" && m.booked).length, 0),
+        Lunch: bookings.reduce((sum, d) => sum + d.meals.filter(m => m.type === "Lunch" && m.booked).length, 0),
+        Dinner: bookings.reduce((sum, d) => sum + d.meals.filter(m => m.type === "Dinner" && m.booked).length, 0),
+        TotalMeals: totalMeals
+    };
 
     return (
-        <div className="p-6 space-y-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl shadow-md">
-            <h1 className="text-2xl font-bold text-gray-800">Daily Auto Booked Meals</h1>
+        <div className="bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 min-h-screen">
+            <div className="max-w-6xl mx-auto space-y-6">
 
-            {/* Top section */}
-            <div className="mb-4 p-4 bg-green-100 rounded-md">
-                {
-                    bookedData ? (
-                        <>
-                            <strong>Booked Meals for {bookedData.date}:</strong>
-                            <ul>{bookedData.bookedMeals.map((m, i) => <li key={i}>{m}</li>)}</ul>
-                            {bookedData.cancelledMeals.length > 0 && <>
-                                <strong>Cancelled Meals:</strong>
-                                <ul>{bookedData.cancelledMeals.map((m, i) => <li key={i}>{m}</li>)}</ul>
-                            </>}
-                        </>
-                    ) : <p>All meals auto-booked. Untick next day meals if skipping.</p>
-                }
-            </div>
+                <h1 className="text-3xl font-bold text-gray-800">Daily Booked Meals</h1>
 
-            {/* Table */}
-            <div className="overflow-x-auto rounded-xl border border-gray-200 max-h-[400px] overflow-y-auto">
-                <table className="table w-full text-center">
-                    <thead className="bg-blue-100 text-gray-700">
-                        <tr>
-                            <th>Date</th>
-                            {mealTypes.map((meal, i) => <th key={i}>{meal.type} ({meal.price}৳)</th>)}
-                            <th>Confirm</th>
-                        </tr>
-                    </thead>
-                    <tbody className="bg-white">
-                        {
-                            bookings.map((day, dayIdx) => {
+                {/* Summary Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {mealTypes.map((meal, i) => (
+                        <div key={i} className={`${meal.color} text-white p-5 rounded-xl shadow-md hover:shadow-lg transition`}>
+                            <h4 className="text-sm font-medium opacity-90">{meal.type}</h4>
+                            <p className="text-2xl font-bold mt-1">{summary[meal.type]}</p>
+                        </div>
+                    ))}
+                    <div className="bg-indigo-500 text-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
+                        <h4 className="text-sm font-medium opacity-90">Total Meals</h4>
+                        <p className="text-2xl font-bold mt-1">{summary.TotalMeals}</p>
+                    </div>
+                </div>
+
+                {/* Bookings Table */}
+                <div className="overflow-x-auto rounded-xl border border-gray-200 max-h-[400px] overflow-y-auto">
+                    <table className="table w-full text-center">
+                        <thead className="bg-blue-100 text-gray-700">
+                            <tr>
+                                <th>Date</th>
+                                {mealTypes.map((meal, i) => <th key={i}>{meal.type} ({meal.price}৳)</th>)}
+                                <th>Confirm</th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white">
+                            {bookings.map((day, dayIdx) => {
                                 const nextDay = new Date(today); nextDay.setDate(today.getDate() + 1);
                                 const isUnlocked = new Date(day.date).toDateString() === nextDay.toDateString();
                                 return (
@@ -137,12 +143,14 @@ export default function MealsBooking({ email, token }) {
                                             <button disabled={!isUnlocked} className={`px-4 py-1 rounded-md text-white ${isUnlocked ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300 cursor-not-allowed"}`} onClick={() => confirmBookings(dayIdx)}>Confirm</button>
                                         </td>
                                     </tr>
-                                )
-                            })
-                        }
-                    </tbody>
-                </table>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
         </div>
     );
 }
+export default MealsBooking;

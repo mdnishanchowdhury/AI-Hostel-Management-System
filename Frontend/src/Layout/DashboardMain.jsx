@@ -41,7 +41,7 @@ function DashboardMain() {
       )}
 
       {/* Main Content */}
-      <div className="flex-1 p-6 bg-gray-50 rounded-lg shadow-inner mt-16 md:mt-0">
+      <div className="flex-1 p-4 bg-gray-50 rounded-lg shadow-inner mt-16 md:mt-0">
         <Outlet />
       </div>
     </div>

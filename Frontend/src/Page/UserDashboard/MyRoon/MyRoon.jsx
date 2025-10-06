@@ -19,7 +19,7 @@ function MyRoom() {
     enabled: !!user?.email,
   });
 
-  // Fetch all rooms
+  // all rooms
   const { data: rooms = [], isLoading: roomLoading } = useQuery({
     queryKey: ["rooms"],
     queryFn: async () => {
@@ -67,7 +67,7 @@ function MyRoom() {
 
   return (
     <motion.div
-      className="max-w-4xl mx-auto bg-gradient-to-r from-purple-50 to-blue-50 shadow-xl rounded-2xl p-8 mt-10"
+      className="max-w-4xl mx-auto bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100  shadow-xl rounded-2xl p-6 lx:p-8 mt-5 lx:mt-10"
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}

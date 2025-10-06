@@ -29,7 +29,7 @@ function Profile() {
 
     return (
         <motion.div
-            className="max-w-4xl mx-auto bg-gradient-to-r from-purple-50 to-blue-50 shadow-lg rounded-2xl p-8 mt-10"
+            className="max-w-4xl mx-auto bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 shadow-lg rounded-2xl p-4 mt-10"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}

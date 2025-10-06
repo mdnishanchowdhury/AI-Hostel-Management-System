@@ -52,7 +52,7 @@ function AutoBookedMeals() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-indigo-100 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-indigo-100 px-2 rounded-md md:px-4">
       <div className="w-full max-w-xl backdrop-blur-lg bg-white/60 rounded-3xl shadow-xl border border-blue-100 p-10 transition hover:shadow-2xl duration-500">
         {/* Header */}
         <div className="text-center mb-8">

@@ -11,11 +11,10 @@ export default function UserPayment() {
     const [mealCost, setMealCost] = useState(0);
     const [roomRent] = useState(4500);
     const [total, setTotal] = useState(4500);
-    const [month, setMonth] = useState(new Date().toISOString().slice(0, 7)); // YYYY-MM
+    const [month, setMonth] = useState(new Date().toISOString().slice(0, 7));
     const [paymentMethod, setPaymentMethod] = useState("Cash");
     const [alreadyPaid, setAlreadyPaid] = useState(false);
 
-    // ✅ Fetch user profile info
     const { data: profile, isLoading: profileLoading, error: profileError } = useQuery({
         queryKey: ["profile", user?.email],
         queryFn: async () => {
@@ -25,13 +24,11 @@ export default function UserPayment() {
         enabled: !!user?.email,
     });
 
-    // ✅ Fetch meal cost and check previous payment
     useEffect(() => {
         if (!user?.email || !month) return;
 
         const fetchData = async () => {
             try {
-                // ১. Meal cost
                 const mealRes = await axiosSecure.get(
                     `/bookings/user-history?email=${user.email}&month=${month}`
                 );
@@ -40,7 +37,6 @@ export default function UserPayment() {
                 setMealCost(mealTotal);
                 setTotal(roomRent + mealTotal);
 
-                // ২. Check if already paid
                 const payRes = await axiosSecure.get(`/payments/user?email=${user.email}`);
                 const userPayments = payRes.data || [];
                 const paidThisMonth = userPayments.some(p => p.month === month);
@@ -55,20 +51,10 @@ export default function UserPayment() {
     }, [user?.email, month, roomRent, axiosSecure]);
 
     const handlePayment = async () => {
-        if (!month) {
-            Swal.fire("Warning", "Please select the month.", "warning");
-            return;
-        }
-
-        if (alreadyPaid) {
-            Swal.fire("Info", "You have already paid for this month!", "info");
-            return;
-        }
-
-        if (!profile?.name || !profile?.studentId) {
-            Swal.fire("Error", "User profile incomplete. Cannot proceed.", "error");
-            return;
-        }
+        if (!month) return Swal.fire("Warning", "Please select the month.", "warning");
+        if (alreadyPaid) return Swal.fire("Info", "You have already paid for this month!", "info");
+        if (!profile?.name || !profile?.studentId)
+            return Swal.fire("Error", "User profile incomplete. Cannot proceed.", "error");
 
         try {
             const res = await axiosSecure.post("/payments", {
@@ -99,43 +85,65 @@ export default function UserPayment() {
     if (profileError) return <p>Failed to load profile.</p>;
 
     return (
-        <div className="payment-box p-6 bg-white rounded shadow-md max-w-md mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Hostel Payment</h2>
+        <div className=" bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 min-h-screen">
+            <div className="flex justify-center">
+                <div className="w-full max-w-md space-y-6 bg-white/90 backdrop-blur-md shadow-lg rounded-2xl p-4">
 
-            <label className="block mb-2 font-semibold">
-                Month:
-                <input
-                    type="month"
-                    value={month}
-                    onChange={(e) => setMonth(e.target.value)}
-                    className="w-full p-2 border rounded mt-1"
-                />
-            </label>
+                    <h2 className="text-3xl font-bold text-gray-800 ">Hostel Payment</h2>
 
-            <p>Room Rent: {roomRent} TK</p>
-            <p>Meal Cost: {mealCost} TK</p>
-            <h3 className="font-bold">Total: {total} TK</h3>
+                    {/* Month Picker */}
+                    <div className="flex items-center gap-3">
+                        <label className="font-semibold text-gray-700">Month:</label>
+                        <input
+                            type="month"
+                            value={month}
+                            onChange={(e) => setMonth(e.target.value)}
+                            className="flex-1 px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        />
+                    </div>
 
-            <label className="block mt-4 font-semibold">
-                Payment Method:
-                <select
-                    value={paymentMethod}
-                    onChange={(e) => setPaymentMethod(e.target.value)}
-                    className="w-full p-2 border rounded mt-1"
-                >
-                    <option value="Cash">Cash</option>
-                    <option value="Bkash">Bkash</option>
-                    <option value="Nagad">Nagad</option>
-                </select>
-            </label>
+                    {/* Payment Summary Cards */}
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div className="bg-blue-500 text-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
+                            <p className="text-sm opacity-90 font-medium">Room Rent</p>
+                            <p className="text-xl font-bold mt-1">{roomRent} TK</p>
+                        </div>
+                        <div className="bg-green-500 text-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
+                            <p className="text-sm opacity-90 font-medium">Meal Cost</p>
+                            <p className="text-xl font-bold mt-1">{mealCost} TK</p>
+                        </div>
+                        <div className="bg-indigo-500 text-white p-4 rounded-xl shadow-md hover:shadow-lg transition">
+                            <p className="text-sm opacity-90 font-medium">Total</p>
+                            <p className="text-xl font-bold mt-1">{total} TK</p>
+                        </div>
+                    </div>
 
-            <button
-                onClick={handlePayment}
-                className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-                disabled={alreadyPaid}
-            >
-                {alreadyPaid ? "Already Paid" : "Pay Now"}
-            </button>
+                    {/* Payment Method */}
+                    <div>
+                        <label className="block mb-2 font-semibold text-gray-700">Payment Method:</label>
+                        <select
+                            value={paymentMethod}
+                            onChange={(e) => setPaymentMethod(e.target.value)}
+                            className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        >
+                            <option value="Cash">Cash</option>
+                            <option value="Bkash">Bkash</option>
+                            <option value="Nagad">Nagad</option>
+                        </select>
+                    </div>
+
+                    {/* Pay Button */}
+                    <button
+                        onClick={handlePayment}
+                        disabled={alreadyPaid}
+                        className={`w-full py-2 rounded-lg text-white font-semibold shadow-md transition ${alreadyPaid ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
+                    >
+                        {alreadyPaid ? "Already Paid" : "Pay Now"}
+                    </button>
+
+                </div>
+            </div>
         </div>
+
     );
 }

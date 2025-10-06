@@ -22,7 +22,7 @@ function DailyBookedMeals() {
         icon: "error",
         title: "Oops...",
         text: "Failed to fetch meals summary!",
-        confirmButtonColor: "#3b82f6",
+        confirmButtonColor: "#3b82f6", // blue-500
       });
     } finally {
       setLoading(false);
@@ -34,9 +34,9 @@ function DailyBookedMeals() {
   }, [selectedDate]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl p-6 space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 md:p-6">
+      <div className="max-w-6xl mx-auto space-y-6 backdrop-blur-md">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4  bg-white/80 shadow-md rounded-2xl p-6">
           <h1 className="text-3xl font-bold text-gray-800">
             Daily Meals Summary
           </h1>
@@ -50,31 +50,31 @@ function DailyBookedMeals() {
               id="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="border border-gray-300 rounded-lg px-3 py-1.5 bg-white text-gray-800 focus:ring-2 focus:ring-blue-400 focus:outline-none"
             />
           </div>
         </div>
 
         {loading ? (
           <div className="flex justify-center items-center py-16">
-            <MenuLoading></MenuLoading>
+            <MenuLoading />
           </div>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-blue-500 text-white p-5 rounded-xl shadow hover:shadow-md transition">
+              <div className="bg-blue-500 text-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
                 <h2 className="text-sm opacity-90 font-medium">Breakfast</h2>
                 <p className="text-3xl font-bold mt-1">
                   {summary.totalSummary?.Breakfast || 0}
                 </p>
               </div>
-              <div className="bg-green-500 text-white p-5 rounded-xl shadow hover:shadow-md transition">
+              <div className="bg-green-500 text-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
                 <h2 className="text-sm opacity-90 font-medium">Lunch</h2>
                 <p className="text-3xl font-bold mt-1">
                   {summary.totalSummary?.Lunch || 0}
                 </p>
               </div>
-              <div className="bg-orange-500 text-white p-5 rounded-xl shadow hover:shadow-md transition">
+              <div className="bg-indigo-500 text-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
                 <h2 className="text-sm opacity-90 font-medium">Dinner</h2>
                 <p className="text-3xl font-bold mt-1">
                   {summary.totalSummary?.Dinner || 0}
@@ -82,50 +82,54 @@ function DailyBookedMeals() {
               </div>
             </div>
 
-            <div className="overflow-x-auto bg-gray-50 border rounded-xl shadow-sm mt-6">
-              <table className="w-full text-sm text-left border-collapse">
-                <thead className="bg-gray-200 text-gray-800">
-                  <tr>
-                    <th className="p-3 font-semibold">Email</th>
-                    <th className="p-3 font-semibold">Booked Meals</th>
-                    <th className="p-3 font-semibold">Canceled Meals</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {summary.userList?.length > 0 ? (
-                    summary.userList.map((user, idx) => (
-                      <tr
-                        key={idx}
-                        className="border-t hover:bg-gray-100 transition"
-                      >
-                        <td className="p-3 font-medium text-gray-700">
-                          {user.email}
-                        </td>
-                        <td className="p-3 text-gray-700">
-                          {user.bookedMeals.join(", ") || "-"}
-                        </td>
-                        <td className="p-3 text-gray-700">
-                          {user.canceledMeals.join(", ") || "-"}
+            <div className=" bg-white/80 shadow-lg rounded-2xl p-6">
+              <div className="overflow-x-auto bg-white/80  border border-gray-200 rounded-xl shadow-sm mt-6">
+                <table className="w-full text-sm text-left border-collapse">
+                  <thead className="bg-blue-100 text-gray-700">
+                    <tr>
+                      <th className="p-3 font-semibold">Email</th>
+                      <th className="p-3 font-semibold">Booked Meals</th>
+                      <th className="p-3 font-semibold">Canceled Meals</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {summary.userList?.length > 0 ? (
+                      summary.userList.map((user, idx) => (
+                        <tr
+                          key={idx}
+                          className="border-b hover:bg-blue-50 transition"
+                        >
+                          <td className="p-3 font-medium text-gray-800">
+                            {user.email}
+                          </td>
+                          <td className="p-3 text-gray-700">
+                            {user.bookedMeals.join(", ") || "-"}
+                          </td>
+                          <td className="p-3 text-gray-700">
+                            {user.canceledMeals.join(", ") || "-"}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={3}
+                          className="p-6 text-center text-gray-500 italic"
+                        >
+                          No bookings for this date.
                         </td>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={3}
-                        className="p-6 text-center text-gray-500 italic"
-                      >
-                        No bookings for this date.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </>
         )}
       </div>
+
     </div>
   );
 }
+
 export default DailyBookedMeals;

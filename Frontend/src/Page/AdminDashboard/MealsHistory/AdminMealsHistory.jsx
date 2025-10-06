@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../Hook/useAxiosSecure";
 import Swal from "sweetalert2";
+import MenuLoading from "../../../Components/Loading/MenuLoading";
 
 function AdminMealsHistory() {
   const axiosSecure = useAxiosSecure();
@@ -42,15 +43,18 @@ function AdminMealsHistory() {
   );
 
   return (
-    <div className="p-8 bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 min-h-screen rounded-2xl">
+    <div className="md:p-6 bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 min-h-screen rounded-2xl">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-        <h1 className="text-4xl font-extrabold text-gray-800">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 bg-white/80 shadow-md rounded-2xl p-6">
+        <h1 className="text-3xl font-bold text-gray-800">
           Monthly Meals History
         </h1>
 
         {/* Controls */}
-        <div className="flex flex-wrap items-center gap-3 mt-4 md:mt-0">
+        <div className="flex flex-wrap items-center gap-3 mt-4 md:mt-0 bg-gray-100 px-3 p-2 rounded-lg">
+          <label htmlFor="date" className="font-semibold text-gray-700">
+            Select Date:
+          </label>
           <input
             type="month"
             value={month}
@@ -58,7 +62,7 @@ function AdminMealsHistory() {
             className="border border-gray-300 px-3 py-2 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />
 
-          <button
+          {/* <button
             onClick={() => refetch()}
             disabled={isLoading}
             className={`px-5 py-2 rounded-lg font-medium text-white shadow-md transition ${isLoading
@@ -67,7 +71,7 @@ function AdminMealsHistory() {
               }`}
           >
             {isLoading ? "Loading..." : "Search"}
-          </button>
+          </button> */}
 
           <input
             type="text"
@@ -98,9 +102,7 @@ function AdminMealsHistory() {
 
       {/* Table Section */}
       {isLoading ? (
-        <p className="text-gray-600 text-center mt-8 animate-pulse">
-          Loading data...
-        </p>
+        <MenuLoading></MenuLoading>
       ) : isError ? (
         <p className="text-red-600 text-center mt-8">Failed to load history.</p>
       ) : filteredHistory.length > 0 ? (

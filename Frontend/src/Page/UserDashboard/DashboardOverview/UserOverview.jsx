@@ -59,7 +59,7 @@ export default function UserOverview() {
   }, []);
 
   return (
-    <div className="p-6 space-y-6 w-full">
+    <div className="md:p-8 space-y-6 w-full">
       <h1 className="text-3xl font-bold text-gray-800 mb-4">My Dashboard</h1>
 
       {/* Summary Cards */}

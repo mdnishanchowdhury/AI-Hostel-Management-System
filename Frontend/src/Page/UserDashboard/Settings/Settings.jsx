@@ -7,7 +7,7 @@ export default function Settings() {
   const [activeTab, setActiveTab] = useState("account");
 
   return (
-    <div className="max-w-6xl mx-auto p-6 md:p-10 flex flex-col md:flex-row gap-6">
+    <div className="max-w-6xl bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 mx-auto md:p-10 flex flex-col md:flex-row gap-6">
       
       {/* Sidebar */}
       <div className="md:w-1/4 bg-white dark:bg-gray-900 rounded-xl shadow-md p-5">
