@@ -1,15 +1,14 @@
 const paymentsCollection = require('../models/paymentModel');
-const mealBookingsCollection = require('../models/mealBookingModel'); // new import
+const mealBookingsCollection = require('../models/mealBookingModel'); 
 const usersCollection = require('../models/userModel');
 
-// ✅ Create payment (only once per month)
 const createPayment = async (req, res) => {
     const { userName, studentId, email, month, paymentMethod, status } = req.body;
 
     try {
         if (!month) return res.status(400).send({ message: "Month is required" });
 
-        // ১️⃣ Check if payment already exists
+        //Check if payment already exists
         const existingPayment = await paymentsCollection.findOne({ email, month });
         if (existingPayment) {
             return res.status(400).send({
@@ -22,12 +21,10 @@ const createPayment = async (req, res) => {
         const startDate = new Date(year, monthNumber - 1, 1);
         const endDate = new Date(year, monthNumber, 1);
 
-        // ২️⃣ Fetch meal bookings for that month
         const mealBookings = await mealBookingsCollection
             .find({ email, date: { $gte: startDate, $lt: endDate } })
             .toArray();
 
-        // ৩️⃣ Sum meal cost
         let totalMealCost = 0;
         mealBookings.forEach(b => {
             b.meals.forEach(m => {
@@ -51,7 +48,6 @@ const createPayment = async (req, res) => {
             createdAt: new Date()
         };
 
-        // ৪️⃣ Insert payment
         await paymentsCollection.insertOne(payment);
         res.send({
             message: "Payment added successfully",
@@ -64,16 +60,12 @@ const createPayment = async (req, res) => {
     }
 };
 
-
-// 🔍 Admin: All payments
-// GET /payments?month=YYYY-MM
 const getAllPayments = async (req, res) => {
     try {
-        const { month } = req.query; // frontend থেকে আসছে
+        const { month } = req.query; 
         let query = {};
 
         if(month) {
-            // month format: YYYY-MM
             const [year, mon] = month.split("-");
             const startDate = new Date(year, mon - 1, 1);
             const endDate = new Date(year, mon, 1);
@@ -89,7 +81,7 @@ const getAllPayments = async (req, res) => {
 };
 
 
-// 🔍 User payments
+// User payments
 const getPaymentsByEmail = async (req, res) => {
     const email = req.query.email;
     try {
@@ -127,14 +119,13 @@ const getCurrentMonthPayment = async (req, res) => {
     }
 };
 
-// 🔹 Admin: Current month payment summary (excluding admins)
 const getCurrentMonthPaymentsSummary = async (req, res) => {
   try {
     const now = new Date();
     const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
     const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
-    // ১️⃣ Current month payments per user
+    //Current month payments per user
     const currentMonthPayments = await paymentsCollection.aggregate([
       {
         $match: {
@@ -146,22 +137,20 @@ const getCurrentMonthPaymentsSummary = async (req, res) => {
           _id: "$email",
           totalPaid: { $sum: "$total" },
           paymentCount: { $sum: 1 },
-          status: { $first: "$status" } // latest status
+          status: { $first: "$status" }
         }
       }
     ]).toArray();
 
-    // ২️⃣ All normal users (excluding admins)
+    //All normal users
     const normalUsers = await usersCollection.find({ role: { $ne: "admin" } }).toArray();
 
     const totalUsers = normalUsers.length;
 
-    // ৩️⃣ Paid emails (status === "Paid")
     const paidEmails = currentMonthPayments
       .filter(p => p.status === "Paid")
       .map(p => p._id);
 
-    // ৪️⃣ Unpaid users
     const unpaidUsers = normalUsers.filter(u => !paidEmails.includes(u.email));
 
     res.send({
@@ -184,10 +173,8 @@ const getCurrentMonthUnpaidUsers = async (req, res) => {
     const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
     const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
-    // Normal users (exclude admins)
     const normalUsers = await usersCollection.find({ role: { $ne: "admin" } }).toArray();
 
-    // Current month payments (Paid only)
     const currentMonthPayments = await paymentsCollection.find({
       createdAt: { $gte: startDate, $lt: endDate },
       status: "Paid"
@@ -195,7 +182,6 @@ const getCurrentMonthUnpaidUsers = async (req, res) => {
 
     const paidEmails = currentMonthPayments.map(p => p.email);
 
-    // Unpaid users = normal users যারা paidEmails এ নেই
     const unpaidUsers = normalUsers.filter(u => !paidEmails.includes(u.email));
 
     res.send({ unpaidUsers });

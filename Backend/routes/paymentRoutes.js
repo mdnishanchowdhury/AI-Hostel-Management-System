@@ -1,23 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const { createPayment, getAllPayments, getPaymentsByEmail, getCurrentMonthPayment, getCurrentMonthPaymentsSummary, getCurrentMonthUnpaidUsers } = require('../controllers/paymentController');
+const verifyToken = require('../middlewares/verifyToken');
+const verifyAdmin = require('../middlewares/verifyAdmin');
 
-// ➕ নতুন payment create করা (meal bookings থেকে auto calculate) done
-router.post('/', createPayment); 
+// payment create
+router.post('/',verifyToken,verifyAdmin, createPayment); 
 
-// 📄 সব payment দেখানো (admin panel)
-router.get('/', getAllPayments);
+// All payment list
+router.get('/',verifyToken,verifyAdmin, getAllPayments);
 
-// 🔍 নির্দিষ্ট user এর payment (email দিয়ে)
-router.get('/user', getPaymentsByEmail);
+// get payment email check 
+router.get('/user',verifyToken, getPaymentsByEmail);
 
 // user monthly history
-router.get('/current-month', getCurrentMonthPayment);
+router.get('/current-month',verifyToken,verifyAdmin, getCurrentMonthPayment);
 
-// ➕ Current month payment summary (admin only)
-router.get('/summary/current-month', getCurrentMonthPaymentsSummary);
+// Current month payment summary
+router.get('/summary/current-month',verifyToken,verifyAdmin, getCurrentMonthPaymentsSummary);
 
 // unpaid
-router.get("/unpaid", getCurrentMonthUnpaidUsers);
+router.get("/unpaid",verifyToken,verifyAdmin, getCurrentMonthUnpaidUsers);
 
 module.exports = router;

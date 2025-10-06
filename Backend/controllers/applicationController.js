@@ -15,13 +15,11 @@ const createApplication = async (req, res) => {
             return res.status(400).send({ message: "Name and email are required" });
         }
 
-        // Check if email already applied
         const existingApplication = await applicationCollection.findOne({ email });
         if (existingApplication) {
             return res.status(400).send({ message: "You have already applied!" });
         }
 
-        // Insert new application
         const newApplication = { email, name, ...rest, createdAt: new Date() };
         const result = await applicationCollection.insertOne(newApplication);
 
@@ -47,7 +45,7 @@ const getApplications = async (req, res) => {
 const updateApplication = async (req, res) => {
     try {
         const id = req.params.id;
-        const { action } = req.body; // accepted | rejected
+        const { action } = req.body; 
         if (!['accepted', 'rejected'].includes(action)) {
             return res.status(400).send({ message: "Invalid action" });
         }
@@ -109,7 +107,7 @@ const postApplicationSuggest = async (req, res) => {
 
         let bestMatch = null;
         let bestScore = -1;
-        const maxScore = 8; // total similarity score
+        const maxScore = 8; 
 
         applications.forEach((app) => {
             let score = 0;
@@ -143,7 +141,7 @@ const postApplicationSuggest = async (req, res) => {
         let matchPercent = 0;
         let matchWith = null;
 
-        const MATCH_THRESHOLD = 0.5; // 50%
+        const MATCH_THRESHOLD = 0.5; 
 
         // Only suggest seat 
         if (bestMatch && (bestScore / maxScore) >= MATCH_THRESHOLD) {
@@ -179,21 +177,18 @@ const applicationPatch = async (req, res) => {
             return res.status(400).send({ message: "Name and email are required" });
         }
 
-        // check if application exists
         const existingApplication = await applicationCollection.findOne({ email });
 
         if (!existingApplication) {
             return res.status(404).send({ message: "No application found for this email" });
         }
 
-        // pending or accepted 
         if (["pending", "accepted"].includes(existingApplication.status)) {
             return res.status(400).send({
                 message: `Your application is already ${existingApplication.status}`
             });
         }
 
-        // update status to pending
         const updateDoc = {
             $set: {
                 ...rest,
