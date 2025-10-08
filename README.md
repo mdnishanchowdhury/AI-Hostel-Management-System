@@ -120,11 +120,19 @@ frontend/
 │   ├── main.jsx
 │   └── .env.local
 
-## ⚙️ Installation
 
-1. Clone the repository  
-   ```bash
-   git clone [https://github.com/your-username/your-repo.git](https://github.com/mdnishanchowdhury/AI-Hostel-Management-System.git)
 
-1. npm install
-2. npm run dev
+### ⚙️ Installation
+
+# Clone the repository
+git clone https://github.com/mdnishanchowdhury/AI-Hostel-Management-System.git
+
+# Navigate into the project folder
+cd AI-Hostel-Management-System
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
