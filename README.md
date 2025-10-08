@@ -76,7 +76,7 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
 ## 🗂️ Folder Structure
 
-
+```plaintext
 frontend/
 ├── public/
 ├── src/
@@ -119,5 +119,4 @@ frontend/
 │   ├── index.css
 │   ├── main.jsx
 │   └── .env.local
-
 
