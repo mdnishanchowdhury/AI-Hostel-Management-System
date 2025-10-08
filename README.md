@@ -42,10 +42,10 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
   </li>
 
   <li>
-    <strong>Meals History:</strong> View historical meal data.<br/>
-    <img src="https://i.ibb.co.com/VYZT40S5/daily-meal-history1.png" alt="Meals History" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
+    <strong>Payment History:</strong> Track all hostel payments and transactions.<br/>
+    <img src="https://i.ibb.co/mrkLNSZ1/payment.png" alt="Payment History" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
   </li>
-
+  
   <li>
     <strong>Payment History:</strong> Track all hostel payments and transactions.<br/>
     <img src="https://i.ibb.co/mrkLNSZ1/payment.png" alt="Payment History" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
