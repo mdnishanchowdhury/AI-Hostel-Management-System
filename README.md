@@ -41,7 +41,7 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
 - **Payment History:** Track all hostel payments and transactions.  
   
-![Payment History](https://i.ibb.co.com/7xhbZs3Y/payment.png)
+![Payment History](https://i.ibb.co.com/LXP8ZTRR/payment.png)
 
 ### Student Features
 - **Dashboard:** Personalized overview for students.  
