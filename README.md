@@ -121,8 +121,7 @@ frontend/
 │   └── .env.local
 
 
-```bash
-### ⚙️ Installation
+## ⚙️ Installation
 
 # Clone the repository
 git clone https://github.com/mdnishanchowdhury/AI-Hostel-Management-System.git
