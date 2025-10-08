@@ -74,6 +74,22 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
 ---
 
+
+## ⚙️ Installation
+# Clone the repository
+git clone https://github.com/mdnishanchowdhury/AI-Hostel-Management-System.git
+
+# Navigate into the project folder
+cd AI-Hostel-Management-System
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+---
+
 <details>
   <summary>🗂️ Folder Structure</summary>
 
@@ -121,18 +137,5 @@ frontend/
 │   ├── main.jsx
 │   └── .env.local
 
-
-## ⚙️ Installation
-# Clone the repository
-git clone https://github.com/mdnishanchowdhury/AI-Hostel-Management-System.git
-
-# Navigate into the project folder
-cd AI-Hostel-Management-System
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
 
 
