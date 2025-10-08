@@ -43,7 +43,7 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
   <li>
     <strong>Meals History:</strong> View historical meal data.<br/>
-    <img src="https://i.ibb.co/G38vsS9y/daily-meal-history.png" alt="Meals History" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
+    <img src="https://i.ibb.co.com/BvcK2g7/daily-meal-history1.png" alt="Meals History" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
   </li>
 
   <li>
