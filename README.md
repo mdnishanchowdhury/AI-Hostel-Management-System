@@ -15,27 +15,33 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
 
 ### Admin Features
-- **Dashboard:** Overview of hostel activities and statistics.
+- **Dashboard:** Overview of hostel activities and statistics.  
   
- ![Dashboard](https://i.ibb.co/9HZDqn2R/dashboard.png)
+![Dashboard](https://i.ibb.co/9HZDqn2R/dashboard.png)
+
 - **Applications:** View and manage student applications.  
   
- ![Applications](https://i.ibb.co.com/ksPnyhVz/application.png)
+![Applications](https://i.ibb.co/ksPnyhVz/application.png)
+
 - **All Users:** Manage student and staff accounts.  
   
- ![All Users](https://i.ibb.co.com/0pfMwmK0/all-user.png)
+![All Users](https://i.ibb.co/0pfMwmK0/all-user.png)
+
 - **Auto Booking:** Automatically assign rooms and seats.  
   
- ![Auto Booking](https://i.ibb.co.com/fY5qbLVP/auto-booking.png)
+![Auto Booking](https://i.ibb.co/fY5qbLVP/auto-booking.png)
+
 - **Daily Meals:** Track daily meals for students.  
   
- ![Daily Meals](https://i.ibb.co.com/XZsSbrHX/daily-meals.png)
+![Daily Meals](https://i.ibb.co/XZsSbrHX/daily-meals.png)
+
 - **Meals History:** View historical meal data.  
   
- ![Meals History](https://i.ibb.co.com/G38vsS9y/daily-meal-history.png)
+![Meals History](https://i.ibb.co/G38vsS9y/daily-meal-history.png)
+
 - **Payment History:** Track all hostel payments and transactions.  
   
- ![Payment History](https://i.ibb.co.com/7xhbZs3Y/payment.png)
+![Payment History](https://i.ibb.co/7xhbZs3Y/payment.png)
 
 ### Student Features
 - **Dashboard:** Personalized overview for students.  
