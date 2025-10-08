@@ -31,10 +31,10 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
     <img src="https://i.ibb.co/0pfMwmK0/all-user.png" alt="All Users" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
   </li>
 
-  <li>
-    <strong>Auto Booking:</strong> Automatically assign rooms and seats.<br/>
-    <img src="https://i.ibb.co.com/s9L26xTx/auto-booking1.png" alt="Auto Booking" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
-  </li>
+<li>
+  <strong>Auto Booking:</strong> Automatically assign rooms and seats.<br/>
+  <img src="https://i.ibb.co/s9L26xTx/auto-booking1.png" alt="Auto Booking" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
+</li>
 
   <li>
     <strong>Daily Meals:</strong> Track daily meals for students.<br/>
