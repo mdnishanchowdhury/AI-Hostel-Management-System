@@ -5,6 +5,14 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 ---
 
 ## 🚀 Features
+### Admin Features
+
+### Hostel Registration
+- **Room Selection:** The final step of hostel registration where students can choose or accept an AI-suggested seat.  
+- The AI system recommends the best match based on profile similarity (e.g., *Room-101-Bed-3* with 91% match).  
+- Students can either **Accept Suggested Seat** or manually **Select a seat** from the dropdown.  
+- ![Hostel Registration](https://i.ibb.co.com/gZCY2N8n/Screenshot-2025-09-25-203220.png)
+
 
 ### Admin Features
 - **Dashboard:** Overview of hostel activities and statistics.  
