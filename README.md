@@ -1,4 +1,4 @@
-# AI Hostel Management System 🏨🤖
+<img width="1918" height="862" alt="image" src="https://github.com/user-attachments/assets/02b20e03-abb2-4838-9b17-aefb40bcad69" /># AI Hostel Management System 🏨🤖
 
 An **AI-powered hostel management system** built with **React, Node.js and MongoDB** to streamline hostel operations including room allocation, food management, payments, attendance tracking and administrative tasks. The system has separate dashboards for admin and students.
 
@@ -43,7 +43,7 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
 <li>
   <strong>Meals History:</strong> Track all hostel payments and transactions.<br/>
-  <img src="https://i.ibb.co.com/SDJHkZPs/history.png" alt="Meals History" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
+  <img src="https://i.ibb.co.com/Y4JH8ZHr/1d.png" alt="Meals History" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
 </li>
   
   <li>
