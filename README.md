@@ -37,10 +37,11 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
     <img src="https://i.ibb.co.com/fY5qbLVP/auto-booking.png" alt="Auto Booking" style="height:100%; display:block; margin-bottom:20px;"/>
   </li>
 
-  <li>
-    <strong>Daily Meals:</strong> Track daily meals for students.<br/>
-    <img src="https://i.ibb.co/XZsSbrHX/daily-meals.png" alt="Daily Meals" style="height:100%; display:block; margin-bottom:20px;"/>
-  </li>
+<li>
+  <strong>Daily Meals:</strong> Track daily meals for students.<br/>
+  <img src="https://i.ibb.co/XZsSbrHX/daily-meals.png" alt="Daily Meals" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
+</li>
+
 
   <li>
     <strong>Meals History:</strong> View historical meal data.<br/>
