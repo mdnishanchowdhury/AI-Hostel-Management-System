@@ -120,8 +120,8 @@ frontend/
 │   ├── main.jsx
 │   └── .env.local
 
-</details> ```
 
+```bash
 ### ⚙️ Installation
 
 # Clone the repository
