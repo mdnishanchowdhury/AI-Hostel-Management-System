@@ -68,7 +68,8 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 ![Room Booking](images/room_booking.png)
 
 ### Payment History
-![Payment History](https://i.ibb.co.com/k2W6xjWr/payment.png)
+
+![Dashboard](https://i.ibb.co.com/k2W6xjWr/payment.png)
 
 > *(Replace `images/...` with your actual screenshot paths.)*
 
