@@ -27,7 +27,7 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
   <li>
     <strong>All Users:</strong> Manage student and staff accounts.<br/>
-       <img src="https://i.ibb.co.com/SwHZb0Hq/22.png" alt="Applications" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
+       <img src="https://i.ibb.co.com/SwHZb0Hq/22.png" alt="All Users" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
   </li>
 
 <li>
