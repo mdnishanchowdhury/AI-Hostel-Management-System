@@ -51,8 +51,7 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
   </li>
 </ul>
 
-
-### Student Features
+### Student User Features
 - **Dashboard:** Personalized overview for students.  
 - **My Room:** View assigned room details.  
 - **Meal Booking:** Book daily meals easily.  
