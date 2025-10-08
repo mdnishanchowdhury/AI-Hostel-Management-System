@@ -33,7 +33,7 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
   <li>
     <strong>Auto Booking:</strong> Automatically assign rooms and seats.<br/>
-    <img src="https://i.ibb.co/fY5qbLVP/auto-booking.png" alt="Auto Booking" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
+    <img src="https://i.ibb.co.com/WXGr4Q0/auto-booking.png" alt="Auto Booking" style="width:100%; height:auto; display:block; margin-bottom:20px;"/>
   </li>
 
   <li>
