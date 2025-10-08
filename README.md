@@ -74,6 +74,47 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
 ---
 
-## 📦 Project Structure
+## 🗂️ Folder Structure
+frontend/
+├── public/
+├── src/
+│   ├── assets/
+│   │   └── Banner/
+│   │       └── react.svg
+│   ├── Components/
+│   │   ├── HomeSection/
+│   │   └── Loading/
+│   ├── Firebase/
+│   │   └── Firebase.jsx
+│   ├── Hook/
+│   │   ├── useAdmin.jsx
+│   │   ├── useAuth.jsx
+│   │   ├── useAxiosPublic.jsx
+│   │   └── useAxiosSecure.jsx
+│   ├── Layout/
+│   │   ├── DashboardMain.jsx
+│   │   └── Main.jsx
+│   ├── Page/
+│   │   ├── AdminDashboard/
+│   │   ├── ApplyForm/
+│   │   ├── DashboardSwitch/
+│   │   ├── DashboardMenu/
+│   │   ├── Home/
+│   │   ├── Login/
+│   │   ├── SignUp/
+│   │   └── UserDashboard/
+│   ├── Provider/
+│   │   └── AuthProvider.jsx
+│   ├── routers/
+│   │   ├── AdminRoute.jsx
+│   │   ├── PrivetRoute.jsx
+│   │   └── router.jsx
+│   ├── Shared/
+│   │   ├── Footer.jsx
+│   │   └── Navbar.jsx
+│   ├── App.css
+│   ├── App.jsx
+│   ├── index.css
+│   ├── main.jsx
+│   └── .env.local
 
-### Frontend
