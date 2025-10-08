@@ -15,8 +15,7 @@ function Login() {
         const email = form.email.value;
         const password = form.password.value;
         signInUser(email, password)
-            .then(result => {
-                // console.log(result.user)
+            .then(()=> {
                 Swal.fire({
                     position: "top-end",
                     icon: "success",
@@ -26,7 +25,29 @@ function Login() {
                 });
                 navigate('/')
             })
+            .catch(error => {
+                let message;
+                switch (error.code) {
+                    case "auth/user-not-found":
+                        message = "User not found. Please register first.";
+                        break;
+                    case "auth/wrong-password":
+                        message = "Wrong password. Try again.";
+                        break;
+                    case "auth/invalid-email":
+                        message = "Invalid email format.";
+                        break;
+                    default:
+                        message = "Login failed. Please check your password.";
+                }
 
+                Swal.fire({
+                    position: "top-end",
+                    icon: "error",
+                    title: message,
+                    showConfirmButton: true
+                });
+            });
     };
 
     useEffect(() => {
