@@ -61,7 +61,7 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 - **Payment History:** View past payments.  
 - **Profile:** Update personal information.  
 - **Settings:** Configure account preferences.  
-
+[Demo Link](https://ai-hostel-system.web.app/)
 ---
 
 ## 🖼️ Screenshots
