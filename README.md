@@ -15,7 +15,8 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
 
 ### Admin Features
-- **Dashboard:** Overview of hostel activities and statistics.  
+- **Dashboard:** Overview of hostel activities and statistics.
+  
  ![Admin Dashboard](https://i.ibb.co/9HZDqn2R/dashboard.png)
 - **Applications:** View and manage student applications.  
 - **All Users:** Manage student and staff accounts.  
