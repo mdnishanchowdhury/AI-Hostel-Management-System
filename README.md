@@ -120,7 +120,7 @@ frontend/
 │   ├── main.jsx
 │   └── .env.local
 
-
+</details> ```
 
 ### ⚙️ Installation
 
