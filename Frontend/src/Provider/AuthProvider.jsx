@@ -1,6 +1,6 @@
 import { createContext, useEffect, useState } from "react"
 export const AuthContext = createContext(null);
-import { createUserWithEmailAndPassword, deleteUser, getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut, updateProfile } from "firebase/auth";
+import { createUserWithEmailAndPassword, deleteUser, EmailAuthProvider, getAuth, onAuthStateChanged, reauthenticateWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, updatePassword, updateProfile } from "firebase/auth";
 import { app } from "../Firebase/Firebase";
 import useAxiosPublic from "../Hook/useAxiosPublic";
 function AuthProvider({ children }) {
@@ -38,6 +38,22 @@ function AuthProvider({ children }) {
         return deleteUser(user || auth.currentUser);
     };
 
+    // Password change 
+    const userPasswordReset = async (oldPassword, newPassword) => {
+        setLoading(true);
+        try {
+            const currentUser = auth.currentUser;
+            if (!currentUser?.email) throw new Error("No user logged in");
+            const credential = EmailAuthProvider.credential(currentUser.email, oldPassword);
+            await reauthenticateWithCredential(currentUser, credential);
+            await updatePassword(currentUser, newPassword);
+            return "Password updated successfully";
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     //save user
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, currentUser => {
@@ -72,6 +88,7 @@ function AuthProvider({ children }) {
         signInUser,
         updatedProfile,
         deleteUserInfo,
+        userPasswordReset,
         userLogOut
     }
     return (
