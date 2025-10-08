@@ -123,7 +123,6 @@ frontend/
 
 
 ## ⚙️ Installation
-
 # Clone the repository
 git clone https://github.com/mdnishanchowdhury/AI-Hostel-Management-System.git
 
@@ -135,4 +134,5 @@ npm install
 
 # Start the development server
 npm run dev
+
 
