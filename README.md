@@ -17,25 +17,25 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 ### Admin Features
 
 - **Dashboard:** Overview of hostel activities and statistics.  
-  <img src="https://i.ibb.co/9HZDqn2R/dashboard.png" alt="Dashboard" width="100%" style="display:block; height:auto; object-fit:contain; margin-bottom:10px;" />
+  <img src="https://i.ibb.co/9HZDqn2R/dashboard.png" alt="Dashboard" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
 
 - **Applications:** View and manage student applications.  
-  <img src="https://i.ibb.co/ksPnyhVz/application.png" alt="Applications" width="100%" style="display:block; height:auto; object-fit:contain; margin-bottom:10px;" />
+  <img src="https://i.ibb.co/ksPnyhVz/application.png" alt="Applications" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
 
 - **All Users:** Manage student and staff accounts.  
-  <img src="https://i.ibb.co/0pfMwmK0/all-user.png" alt="All Users" width="100%" style="display:block; height:auto; object-fit:contain; margin-bottom:10px;" />
+  <img src="https://i.ibb.co/0pfMwmK0/all-user.png" alt="All Users" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
 
 - **Auto Booking:** Automatically assign rooms and seats.  
-  <img src="https://i.ibb.co/fY5qbLVP/auto-booking.png" alt="Auto Booking" width="100%" style="display:block; height:auto; object-fit:contain; margin-bottom:10px;" />
+  <img src="https://i.ibb.co/fY5qbLVP/auto-booking.png" alt="Auto Booking" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
 
 - **Daily Meals:** Track daily meals for students.  
-  <img src="https://i.ibb.co/XZsSbrHX/daily-meals.png" alt="Daily Meals" width="100%" style="display:block; height:auto; object-fit:contain; margin-bottom:10px;" />
+  <img src="https://i.ibb.co/XZsSbrHX/daily-meals.png" alt="Daily Meals" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
 
 - **Meals History:** View historical meal data.  
-  <img src="https://i.ibb.co/G38vsS9y/daily-meal-history.png" alt="Meals History" width="100%" style="display:block; height:auto; object-fit:contain; margin-bottom:10px;" />
+  <img src="https://i.ibb.co/G38vsS9y/daily-meal-history.png" alt="Meals History" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
 
 - **Payment History:** Track all hostel payments and transactions.  
-  <img src="https://i.ibb.co/7xhbZs3Y/payment.png" alt="Payment History" width="100%" style="display:block; height:auto; object-fit:contain; margin-bottom:10px;" />
+  <img src="https://i.ibb.co/7xhbZs3Y/payment.png" alt="Payment History" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
 
 ### Student Features
 - **Dashboard:** Personalized overview for students.  
