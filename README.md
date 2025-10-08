@@ -3,7 +3,7 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
 ---
 
-## 🚀 Features
+## 🚀 Features 🖼️
 ### Admin Features
 
 ### Hostel Registration
@@ -62,25 +62,6 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 - **Profile:** Update personal information.  
 - **Settings:** Configure account preferences.  
 [Demo Link](https://ai-hostel-system.web.app/)
----
-
-## 🖼️ Screenshots
-
-### Admin Dashboard
-![Admin Dashboard](images/admin_dashboard.png)
-
-### Student Dashboard
-![Student Dashboard](images/student_dashboard.png)
-
-### Room & Meal Booking
-![Room Booking](images/room_booking.png)
-
-### Payment History
-
-
-
-> *(Replace `images/...` with your actual screenshot paths.)*
-
 ---
 
 ## 🛠️ Tech Stack
