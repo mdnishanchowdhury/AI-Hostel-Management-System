@@ -15,27 +15,33 @@ An **AI-powered hostel management system** built with **React, Node.js and Mongo
 
 
 ### Admin Features
-
 - **Dashboard:** Overview of hostel activities and statistics.  
-  <img src="https://i.ibb.co/9HZDqn2R/dashboard.png" alt="Dashboard" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
+  
+![Dashboard](https://i.ibb.co/9HZDqn2R/dashboard.png)
 
 - **Applications:** View and manage student applications.  
-  <img src="https://i.ibb.co/ksPnyhVz/application.png" alt="Applications" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
+  
+![Applications](https://i.ibb.co/ksPnyhVz/application.png)
 
 - **All Users:** Manage student and staff accounts.  
-  <img src="https://i.ibb.co/0pfMwmK0/all-user.png" alt="All Users" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
+  
+![All Users](https://i.ibb.co/0pfMwmK0/all-user.png)
 
 - **Auto Booking:** Automatically assign rooms and seats.  
-  <img src="https://i.ibb.co/fY5qbLVP/auto-booking.png" alt="Auto Booking" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
+  
+![Auto Booking](https://i.ibb.co/fY5qbLVP/auto-booking.png)
 
 - **Daily Meals:** Track daily meals for students.  
-  <img src="https://i.ibb.co/XZsSbrHX/daily-meals.png" alt="Daily Meals" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
+  
+![Daily Meals](https://i.ibb.co/XZsSbrHX/daily-meals.png)
 
 - **Meals History:** View historical meal data.  
-  <img src="https://i.ibb.co/G38vsS9y/daily-meal-history.png" alt="Meals History" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
+  
+![Meals History](https://i.ibb.co/G38vsS9y/daily-meal-history.png)
 
 - **Payment History:** Track all hostel payments and transactions.  
-  <img src="https://i.ibb.co/7xhbZs3Y/payment.png" alt="Payment History" style="width:100%; height:100vh; object-fit:contain; display:block; margin-bottom:10px;" />
+  
+![Payment History](https://i.ibb.co/7xhbZs3Y/payment.png)
 
 ### Student Features
 - **Dashboard:** Personalized overview for students.  
