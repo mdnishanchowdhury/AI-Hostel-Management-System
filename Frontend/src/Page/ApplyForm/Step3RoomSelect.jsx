@@ -56,7 +56,6 @@ function Step3RoomSelect({ formData, handleChange, prevStep }) {
 
   const handleSubmit = async () => {
     if (!formData.selectedSeat && (matchPercent < MATCH_THRESHOLD || !suggestedSeat)) {
-      navigate('/')
       Swal.fire({
         icon: "warning",
         title: "Please select a seat",
@@ -102,7 +101,7 @@ function Step3RoomSelect({ formData, handleChange, prevStep }) {
               : room
           )
         );
-
+        navigate('/');
         Swal.fire({
           position: "top-end",
           icon: "success",

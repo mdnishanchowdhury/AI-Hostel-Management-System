@@ -1,4 +1,34 @@
-function Step1BasicInfo({ formData, handleChange, nextStep }) {
+import { useState } from "react";
+
+function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
+  const [uploading, setUploading] = useState(false);
+  const imgApiKey = import.meta.env.VITE_IMGBB_API_KEY;
+
+  // Image upload handler
+  const handleImageUpload = async (e) => {
+    const imageFile = e.target.files[0];
+    if (!imageFile) return;
+
+    setUploading(true);
+
+    const imageForm = new FormData();
+    imageForm.append("image", imageFile);
+
+    try {
+      const res = await fetch(`https://api.imgbb.com/1/upload?key=${imgApiKey}`, {
+        method: "POST",
+        body: imageForm,
+      });
+      const data = await res.json();
+      const imageURL = data.data.display_url;
+      setFormData((prev) => ({ ...prev, imageURL }));
+    } catch (error) {
+
+    } finally {
+      setUploading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-poppins font-bold text-center text-gray-700 mb-6">
@@ -135,13 +165,35 @@ function Step1BasicInfo({ formData, handleChange, nextStep }) {
         />
       </div>
 
+      {/* Upload Photo */}
+      <div className="flex flex-col gap-1">
+        <label htmlFor="photo" className="text-sm font-poppins font-medium text-gray-600">
+          Upload Photo
+        </label>
+        <input
+          id="photo"
+          type="file"
+          accept="image/*"
+          onChange={handleImageUpload}
+          className="file-input file-input-bordered w-full max-w-xs"
+        />
+        {uploading && <p className="text-sm text-gray-500 mt-1">Uploading...</p>}
+        {formData.imageURL && (
+          <img
+            src={formData.imageURL}
+            alt="Uploaded"
+            className="w-24 h-24 rounded-md mt-2 object-cover border"
+          />
+        )}
+      </div>
       {/* Next Button */}
       <div className="pt-4">
         <button
           onClick={nextStep}
+          disabled={uploading}
           className="w-full bg-[#FA8370] font-poppins hover:bg-red-600 text-white font-medium py-2 px-6 rounded-lg transition duration-200"
         >
-          Next
+          {uploading ? "Uploading..." : "Next"}
         </button>
       </div>
     </div>

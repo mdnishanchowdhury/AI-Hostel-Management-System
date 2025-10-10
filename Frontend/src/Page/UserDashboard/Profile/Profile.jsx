@@ -52,9 +52,9 @@ function Profile() {
                 transition={{ duration: 0.5, delay: 0.3 }}
             >
                 <img
-                    src={profile?.photo || "https://i.ibb.co/3fJ7k4M/avatar.png"}
+                    src={profile?.image || "https://i.ibb.co/3fJ7k4M/avatar.png"}
                     alt="profile"
-                    className="w-28 h-28 rounded-full border-4 border-indigo-200 shadow-md"
+                    className="w-28 h-28 rounded-full border-4 object-cover border-indigo-200 shadow-md"
                 />
                 <h3 className="text-xl font-semibold mt-4">{profile?.name || "No name"}</h3>
                 <p className="text-gray-600">{profile?.email}</p>

@@ -14,12 +14,12 @@ function ApplyForm() {
     fatherName: "",
     fatherPhone: "",
     address: "",
+    imageURL: "",
     isQuiet: "yes",
     sleepTime: "early",
     studyTime: "day",
     isSmoker: "no",
     cleanliness: "3",
-    // selectedRoom: "",
   });
 
   const nextStep = () => setStep((prev) => prev + 1);
@@ -40,6 +40,7 @@ function ApplyForm() {
       {step === 1 && (
         <Step1BasicInfo
           formData={formData}
+          setFormData={setFormData}
           handleChange={handleChange}
           nextStep={nextStep}
         />
