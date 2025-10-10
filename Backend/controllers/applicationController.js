@@ -45,7 +45,7 @@ const getApplications = async (req, res) => {
 const updateApplication = async (req, res) => {
     try {
         const id = req.params.id;
-        const { action } = req.body; 
+        const { action } = req.body;
         if (!['accepted', 'rejected'].includes(action)) {
             return res.status(400).send({ message: "Invalid action" });
         }
@@ -63,9 +63,10 @@ const updateApplication = async (req, res) => {
             const tempPassword = generatePassword();
 
             await admin.auth().createUser({
+                displayName: application.name,
+                image: application.imageURL,
                 email: application.email,
                 password: tempPassword,
-                displayName: application.name,
             });
 
             await usersCollection.insertOne({
@@ -78,9 +79,10 @@ const updateApplication = async (req, res) => {
                 fatherPhone: application.fatherPhone,
                 selectedSeat: application.selectedSeat,
                 address: application.address,
+                image: application.imageURL,
                 role: 'user',
             });
-            
+
             await transporter.sendMail({
                 from: `"Smart Hostel" <${process.env.EMAIL_USER}>`,
                 to: application.email,
@@ -107,7 +109,7 @@ const postApplicationSuggest = async (req, res) => {
 
         let bestMatch = null;
         let bestScore = -1;
-        const maxScore = 8; 
+        const maxScore = 8;
 
         applications.forEach((app) => {
             let score = 0;
@@ -141,7 +143,7 @@ const postApplicationSuggest = async (req, res) => {
         let matchPercent = 0;
         let matchWith = null;
 
-        const MATCH_THRESHOLD = 0.5; 
+        const MATCH_THRESHOLD = 0.5;
 
         // Only suggest seat 
         if (bestMatch && (bestScore / maxScore) >= MATCH_THRESHOLD) {
