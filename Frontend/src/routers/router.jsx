@@ -25,9 +25,14 @@ import UserPayment from "../Page/UserDashboard/UserPayment.jsx/UserPayment";
 import UserPaymentHistory from "../Page/UserDashboard/UserPaymentHistory/UserPaymentHistory";
 import AdminPaymentsHistory from "../Page/AdminDashboard/PaymentsHistory/AdminPaymentsHistory";
 import DailyBookedMeals from "../Page/AdminDashboard/DailyBookedMeals/DailyBookedMeals";
+import PaymentSuccess from "../Page/UserDashboard/UserPayment.jsx/PaymentSuccess";
+import PaymentFail from "../Page/UserDashboard/UserPayment.jsx/PaymentFail";
+import PaymentCancel from "../Page/UserDashboard/UserPayment.jsx/PaymentCancel";
+import AddRoom from "../Page/AdminDashboard/AddRoom/AddRoom";
+import AdminRooms from "../Page/AdminDashboard/AdminRooms/AdminRooms";
 
 export const router = createBrowserRouter([
-    
+
     {
         path: "/",
         element: <Main></Main>,
@@ -67,7 +72,17 @@ export const router = createBrowserRouter([
             {
                 path: 'apply',
                 element: <ApplyForm></ApplyForm>,
-            }
+            },
+            // SSLCommerz redirect pages
+            {
+                path: 'payment-success', element: <PaymentSuccess />
+            },
+            {
+                path: 'payment-fail', element: <PaymentFail />
+            },
+            {
+                path: 'payment-cancel', element: <PaymentCancel />
+            },
         ]
     },
     {
@@ -131,7 +146,16 @@ export const router = createBrowserRouter([
             {
                 path: "admin/payments/History",
                 element: <PrivetRoute><AdminPaymentsHistory></AdminPaymentsHistory></PrivetRoute>,
+            },
+            {
+                path: "addRoom",
+                element: <PrivetRoute><AddRoom></AddRoom></PrivetRoute>,
+            },
+            {
+                path: "adminRooms",
+                element: <PrivetRoute><AdminRooms></AdminRooms></PrivetRoute>,
             }
+
         ]
     }
 ]);

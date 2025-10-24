@@ -5,6 +5,7 @@ import Step3RoomSelect from "./Step3RoomSelect";
 
 function ApplyForm() {
   const [step, setStep] = useState(1);
+
   const [formData, setFormData] = useState({
     name: "",
     studentId: "",
@@ -15,11 +16,19 @@ function ApplyForm() {
     fatherPhone: "",
     address: "",
     imageURL: "",
-    isQuiet: "yes",
-    sleepTime: "early",
-    studyTime: "day",
+
+    // Ai information
+    rateStudyTime: "",
+    morningStudyStart: "",
+    morningStudyEnd: "",
+    nightStudyStart: "",
+    nightStudyEnd: "",
+    nightSleepStart: "",
+    nightSleepEnd: "",
+    wakeUpTime: "",
     isSmoker: "no",
-    cleanliness: "3",
+    noiseSensitivity: "",
+    cleaningPreference: "",
   });
 
   const nextStep = () => setStep((prev) => prev + 1);
@@ -33,8 +42,10 @@ function ApplyForm() {
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg mb-20 mt-30">
       <div className="mb-6 text-center">
-        <h1 className="text-3xl font-bold text-gray-800">Hostel Registration</h1>
-        <p className="text-gray-500">Step {step} of 3</p>
+        <h1 className="text-3xl font-bold text-gray-800 font-poppins">
+          Hostel Registration
+        </h1>
+        <p className="text-gray-500 font-poppins">Step {step} of 3</p>
       </div>
 
       {step === 1 && (

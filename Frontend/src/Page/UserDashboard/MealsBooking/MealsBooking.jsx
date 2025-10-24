@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import useAuth from "../../../Hook/useAuth";
 import useAxiosSecure from "../../../Hook/useAxiosSecure";
 import Swal from "sweetalert2";
+import MenuLoading from "../../../Components/Loading/MenuLoading";
 
 const mealTypes = [
     { type: "Breakfast", price: 50, color: "bg-blue-500" },
@@ -13,11 +14,14 @@ function MealsBooking({ token }) {
     const today = new Date();
     const [bookings, setBookings] = useState([]);
     const [bookedData, setBookedData] = useState(null);
+    const [loading, setLoading] = useState(false);
     const axiosSecure = useAxiosSecure();
     const { user } = useAuth();
 
     // Fetch booking
     const fetchBookings = async () => {
+        if (!user || !user.email) return;
+        setLoading(true);
         try {
             const res = await axiosSecure.get(`bookings?email=${user.email}`, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -25,10 +29,12 @@ function MealsBooking({ token }) {
             setBookings(res.data);
         } catch (err) {
             console.error(err);
+            Swal.fire("Oops...", "Failed to fetch bookings!", "error");
         }
+        setLoading(false);
     };
 
-    useEffect(() => { fetchBookings(); }, []);
+    useEffect(() => { fetchBookings(); }, [user]);
 
     const toggleMeal = (dayIdx, mealIdx) => {
         const nextDay = new Date(today);
@@ -128,23 +134,37 @@ function MealsBooking({ token }) {
                             </tr>
                         </thead>
                         <tbody className="bg-white">
-                            {bookings.map((day, dayIdx) => {
-                                const nextDay = new Date(today); nextDay.setDate(today.getDate() + 1);
-                                const isUnlocked = new Date(day.date).toDateString() === nextDay.toDateString();
-                                return (
-                                    <tr key={dayIdx}>
-                                        <td className="font-semibold py-3 text-left px-4">{new Date(day.date).toDateString()}</td>
-                                        {day.meals.map((meal, mealIdx) =>
-                                            <td key={mealIdx}>
-                                                <input type="checkbox" checked={meal.booked} disabled={!isUnlocked} onChange={() => toggleMeal(dayIdx, mealIdx)} />
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={mealTypes.length + 2} className="p-6 text-center text-gray-500 italic">
+                                        <MenuLoading />
+                                    </td>
+                                </tr>
+                            ) : bookings.length > 0 ? (
+                                bookings.map((day, dayIdx) => {
+                                    const nextDay = new Date(today); nextDay.setDate(today.getDate() + 1);
+                                    const isUnlocked = new Date(day.date).toDateString() === nextDay.toDateString();
+                                    return (
+                                        <tr key={dayIdx}>
+                                            <td className="font-semibold py-3 text-left px-4">{new Date(day.date).toDateString()}</td>
+                                            {day.meals.map((meal, mealIdx) =>
+                                                <td key={mealIdx}>
+                                                    <input type="checkbox" checked={meal.booked} disabled={!isUnlocked} onChange={() => toggleMeal(dayIdx, mealIdx)} />
+                                                </td>
+                                            )}
+                                            <td>
+                                                <button disabled={!isUnlocked} className={`px-4 py-1 rounded-md text-white ${isUnlocked ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300 cursor-not-allowed"}`} onClick={() => confirmBookings(dayIdx)}>Confirm</button>
                                             </td>
-                                        )}
-                                        <td>
-                                            <button disabled={!isUnlocked} className={`px-4 py-1 rounded-md text-white ${isUnlocked ? "bg-blue-600 hover:bg-blue-700" : "bg-gray-300 cursor-not-allowed"}`} onClick={() => confirmBookings(dayIdx)}>Confirm</button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
+                                        </tr>
+                                    );
+                                })
+                            ) : (
+                                <tr>
+                                    <td colSpan={mealTypes.length + 2} className="p-6 text-center text-gray-500 italic">
+                                        No bookings available.
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>

@@ -81,7 +81,13 @@ function UserMealsHistory() {
               </tr>
             </thead>
             <tbody className="bg-white">
-              {Object.keys(history.daily).length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="p-6 text-center text-gray-500 italic">
+                    <MenuLoading />
+                  </td>
+                </tr>
+              ) : Object.keys(history.daily).length > 0 ? (
                 Object.keys(history.daily).map((day, idx) => (
                   <tr key={idx} className="border-b hover:bg-blue-50 transition">
                     <td className="p-3 font-medium">{day}</td>
@@ -94,11 +100,12 @@ function UserMealsHistory() {
               ) : (
                 <tr>
                   <td colSpan="5" className="p-6 text-center text-gray-500 italic">
-                    <MenuLoading></MenuLoading>
+                    No meal data available for this month.
                   </td>
                 </tr>
               )}
             </tbody>
+
           </table>
         </div>
 

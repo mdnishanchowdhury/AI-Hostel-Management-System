@@ -1,70 +1,155 @@
 import useAxiosPublic from "../../Hook/useAxiosPublic";
 
-function Step2Preferences({ formData, handleChange,nextStep, prevStep }) {
+function Step2Preferences({ formData, handleChange, nextStep, prevStep }) {
   const axiosPublic = useAxiosPublic();
-  // Submit application
+
   const handleSubmit = async () => {
-    axiosPublic.post('/applications', formData)
-      .then((res) => {
-        console.log('next form', res.data)
-      })
+    try {
+      const res = await axiosPublic.post('/applications', formData);
+      console.log('Next form data submitted:', res.data);
+      nextStep(); 
+    } catch (err) {
+      console.error('Error submitting preferences:', err);
+      alert('Failed to submit preferences. Please try again.');
+    }
   };
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-center font-poppins text-gray-700 mb-6">Step 2: Roommate Preferences</h2>
+      <h2 className="text-2xl font-bold text-center font-poppins text-gray-700 mb-6">
+        Step 2: Roommate Preferences
+      </h2>
 
-      {/* Quiet or Not */}
+      {/* Preferred Study Time */}
       <div className="flex flex-col gap-1">
-        <label htmlFor="isQuiet" className="text-sm font-poppins font-medium text-gray-600">
-          Do you prefer a quiet roommate?
+        <label className="text-sm font-poppins font-medium text-gray-600">
+          Preferred Study Time
         </label>
         <select
-          id="isQuiet"
-          name="isQuiet"
-          value={formData.isQuiet}
+          name="rateStudyTime"
+          value={formData.rateStudyTime}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
         >
-          <option value="yes">Yes (Quiet)</option>
-          <option value="no">No (Doesn’t matter)</option>
+          <option value="">Select Time</option>
+          <option value="morning">Morning</option>
+          <option value="afternoon">Afternoon</option>
+          <option value="evening">Evening</option>
+          <option value="night">Night</option>
         </select>
       </div>
 
-      {/* Sleep Time (Manual Input) */}
+      {/* Morning Study Time */}
       <div className="flex flex-col gap-1">
-        <label htmlFor="sleepTime" className="text-sm font-poppins font-medium text-gray-600">
-          What time do you usually sleep?
+        <label className="text-sm font-poppins font-medium text-gray-600">
+          Morning Study Time
         </label>
-        <input
-          type="time"
-          id="sleepTime"
-          name="sleepTime"
-          value={formData.sleepTime}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
-        />
+        <div className="flex gap-2">
+          <input
+            type="time"
+            name="morningStudyStart"
+            value={formData.morningStudyStart}
+            onChange={handleChange}
+            className="w-1/2 border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
+          />
+          <input
+            type="time"
+            name="morningStudyEnd"
+            value={formData.morningStudyEnd}
+            onChange={handleChange}
+            className="w-1/2 border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
+          />
+        </div>
       </div>
 
-      {/* Study Time  */}
+      {/* Night Study Time */}
       <div className="flex flex-col gap-1">
-        <label htmlFor="studyTime" className="text-sm font-poppins font-medium text-gray-600">
-          When do you prefer to study?
+        <label className="text-sm font-poppins font-medium text-gray-600">
+          Night Study Time
         </label>
-        <input
-          type="time"
-          id="studyTime"
-          name="studyTime"
-          value={formData.studyTime}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
-        />
+        <div className="flex gap-2">
+          <input
+            type="time"
+            name="nightStudyStart"
+            value={formData.nightStudyStart}
+            onChange={handleChange}
+            className="w-1/2 border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
+          />
+          <input
+            type="time"
+            name="nightStudyEnd"
+            value={formData.nightStudyEnd}
+            onChange={handleChange}
+            className="w-1/2 border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
+          />
+        </div>
       </div>
 
-      {/* Smoker or not */}
+      {/* Night Sleep Time */}
       <div className="flex flex-col gap-1">
-        <label htmlFor="isSmoker" className="text-sm font-medium font-poppins text-gray-600">
-          Do you smoke?
+        <label className="text-sm font-poppins font-medium text-gray-600">
+          Night Sleep Time
+        </label>
+        <div className="flex gap-2">
+          <input
+            type="time"
+            name="nightSleepStart"
+            value={formData.nightSleepStart}
+            onChange={handleChange}
+            className="w-1/2 border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
+          />
+          <input
+            type="time"
+            name="nightSleepEnd"
+            value={formData.nightSleepEnd}
+            onChange={handleChange}
+            className="w-1/2 border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      {/* Cleaning Preference */}
+      <div className="flex flex-col gap-1">
+        <label htmlFor="cleaningPreference" className="text-sm font-poppins font-medium text-gray-600">
+          Cleaning Preference
+        </label>
+        <select
+          id="cleaningPreference"
+          name="cleaningPreference"
+          value={formData.cleaningPreference}
+          onChange={handleChange}
+          className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
+        >
+          <option value="">Select</option>
+          <option value="always">Always clean after use</option>
+          <option value="weekly">Clean weekly</option>
+          <option value="none">No specific preference</option>
+        </select>
+      </div>
+
+      {/* Noise Sensitivity */}
+      <div className="flex flex-col gap-1">
+        <label htmlFor="noiseSensitivity" className="text-sm font-poppins font-medium text-gray-600">
+          Noise Sensitivity
+        </label>
+        <select
+          id="noiseSensitivity"
+          name="noiseSensitivity"
+          value={formData.noiseSensitivity}
+          onChange={handleChange}
+          className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
+        >
+          <option value="">Select</option>
+          <option value="low">Low (can tolerate noise)</option>
+          <option value="medium">Medium</option>
+          <option value="high">High (very sensitive to noise)</option>
+        </select>
+      </div>
+
+      {/* Smoking Habit */}
+      <div className="flex flex-col gap-1">
+        <label htmlFor="isSmoker" className="text-sm font-poppins font-medium text-gray-600">
+          Smoking Habit
         </label>
         <select
           id="isSmoker"
@@ -73,26 +158,10 @@ function Step2Preferences({ formData, handleChange,nextStep, prevStep }) {
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
         >
-          <option value="no">No</option>
+          <option value="">Select</option>
           <option value="yes">Yes</option>
+          <option value="no">No</option>
         </select>
-      </div>
-
-      {/* Cleanliness */}
-      <div className="flex flex-col gap-1">
-        <label htmlFor="cleanliness" className="text-sm font-poppins font-medium text-gray-600">
-          Cleanliness (1 = Low, 5 = Very Clean)
-        </label>
-        <input
-          id="cleanliness"
-          type="number"
-          name="cleanliness"
-          min="1"
-          max="5"
-          value={formData.cleanliness}
-          onChange={handleChange}
-          className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
-        />
       </div>
 
       {/* Navigation Buttons */}
@@ -104,10 +173,7 @@ function Step2Preferences({ formData, handleChange,nextStep, prevStep }) {
           Back
         </button>
         <button
-          onClick={() => {
-            handleSubmit();
-            nextStep();
-          }}
+          onClick={handleSubmit}
           className="bg-[#FA8370] font-poppins text-white px-6 py-2 rounded-md hover:bg-red-600"
         >
           Next

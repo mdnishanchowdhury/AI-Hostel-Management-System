@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
   const [uploading, setUploading] = useState(false);
+  const [isValid, setIsValid] = useState(false);
   const imgApiKey = import.meta.env.VITE_IMGBB_API_KEY;
 
   // Image upload handler
@@ -23,11 +24,28 @@ function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
       const imageURL = data.data.display_url;
       setFormData((prev) => ({ ...prev, imageURL }));
     } catch (error) {
-
+      console.error("Image upload failed:", error);
+      alert("Failed to upload image. Please try again.");
     } finally {
       setUploading(false);
     }
   };
+
+  useEffect(() => {
+    const requiredFields = [
+      "name",
+      "studentId",
+      "email",
+      "department",
+      "imageURL"
+    ];
+
+    const allFilled = requiredFields.every(
+      (field) => formData[field] && formData[field].toString().trim() !== ""
+    );
+
+    setIsValid(allFilled);
+  }, [formData]);
 
   return (
     <div className="space-y-6">
@@ -47,7 +65,6 @@ function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
           value={formData.name}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
-          required
         />
       </div>
 
@@ -63,7 +80,6 @@ function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
           value={formData.studentId}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
-          required
         />
       </div>
 
@@ -80,7 +96,6 @@ function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
           value={formData.email}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
-          required
         />
       </div>
 
@@ -95,7 +110,6 @@ function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
           value={formData.department}
           onChange={handleChange}
           className="w-full border border-gray-300 rounded-md px-4 py-2 focus:ring-2 focus:ring-red-400 focus:outline-none"
-          required
         >
           <option value="">Select Department</option>
           <option value="CSE">Computer Science & Engineering (CSE)</option>
@@ -104,7 +118,7 @@ function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
         </select>
       </div>
 
-      {/* Phone Number */}
+      {/* Optional fields */}
       <div className="flex flex-col gap-1">
         <label htmlFor="phone" className="text-sm font-poppins font-medium text-gray-600">
           Phone Number
@@ -119,7 +133,6 @@ function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
         />
       </div>
 
-      {/* Father's Name */}
       <div className="flex flex-col gap-1">
         <label htmlFor="fatherName" className="text-sm font-poppins font-medium text-gray-600">
           Father's Name
@@ -134,7 +147,6 @@ function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
         />
       </div>
 
-      {/* Father's Phone */}
       <div className="flex flex-col gap-1">
         <label htmlFor="fatherPhone" className="text-sm font-poppins font-medium text-gray-600">
           Father's Phone Number
@@ -149,7 +161,6 @@ function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
         />
       </div>
 
-      {/* Address */}
       <div className="flex flex-col gap-1">
         <label htmlFor="address" className="text-sm font-poppins font-medium text-gray-600">
           Address
@@ -186,12 +197,15 @@ function Step1BasicInfo({ formData, handleChange, nextStep, setFormData }) {
           />
         )}
       </div>
+
       {/* Next Button */}
       <div className="pt-4">
         <button
           onClick={nextStep}
-          disabled={uploading}
-          className="w-full bg-[#FA8370] font-poppins hover:bg-red-600 text-white font-medium py-2 px-6 rounded-lg transition duration-200"
+          disabled={uploading || !isValid}
+          className={`w-full font-poppins text-white font-medium py-2 px-6 rounded-lg transition duration-200 ${
+            uploading || !isValid ? "bg-gray-400 cursor-not-allowed" : "bg-[#FA8370] hover:bg-red-600"
+          }`}
         >
           {uploading ? "Uploading..." : "Next"}
         </button>

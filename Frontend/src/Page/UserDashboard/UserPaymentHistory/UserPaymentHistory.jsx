@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import useAxiosSecure from "../../../Hook/useAxiosSecure";
 import useAuth from "../../../Hook/useAuth";
+import MenuLoading from "../../../Components/Loading/MenuLoading";
 
 export default function UserPaymentHistory() {
     const { user } = useAuth();
@@ -38,7 +39,7 @@ export default function UserPaymentHistory() {
         return payments.filter((p) => p.month === month);
     }, [month, payments]);
 
-    if (loading) return <p className="text-center mt-6 text-gray-500">Loading...</p>;
+    if (loading) return <MenuLoading></MenuLoading>;
     if (error && payments.length === 0) return <p className="text-center mt-6 text-gray-500">{error}</p>;
 
     return (
