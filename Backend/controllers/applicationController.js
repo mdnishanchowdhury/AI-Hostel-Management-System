@@ -6,48 +6,58 @@ const admin = require('../config/firebase');
 const transporter = require('../config/nodemailer');
 const generatePassword = require('../utils/generatePassword');
 
-// Create new application
+//  Create Apllication (Step 2)
+
 const createApplication = async (req, res) => {
     try {
         const { email, name, ...rest } = req.body;
 
         if (!email || !name) {
-            return res.status(400).send({ message: "Name and email are required" });
+            return res.status(400).json({ message: "Name and email are required" });
         }
 
-        const existingApplication = await applicationCollection.findOne({ email });
-        if (existingApplication) {
-            return res.status(400).send({ message: "You have already applied!" });
+        const existing = await applicationCollection.findOne({ email });
+        if (existing) {
+            return res.status(400).json({ message: "You have already applied!" });
         }
 
-        const newApplication = { email, name, ...rest, createdAt: new Date() };
+        const newApplication = {
+            email,
+            name,
+            ...rest,
+            status: "incomplete",
+            createdAt: new Date(),
+        };
+
         const result = await applicationCollection.insertOne(newApplication);
-
-        res.status(201).send(result);
+        res.status(201).json({ message: "Application saved as incomplete", result });
     } catch (error) {
-        console.error(error);
-        res.status(500).send({ message: "Something went wrong" });
+        console.error("Create Application Error:", error);
+        res.status(500).json({ message: "Something went wrong" });
     }
 };
 
-// Get all applications
+//  Get all applications
+
 const getApplications = async (req, res) => {
     try {
         const apps = await applicationCollection.find().toArray();
-        res.send(apps);
+        res.json(apps);
     } catch (error) {
-        console.error("Error fetching applications:", error);
-        res.status(500).send({ message: "Internal Server Error" });
+        console.error("Get Applications Error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
-// Update application (accept/reject)
+//  updated application (admin)
+
 const updateApplication = async (req, res) => {
     try {
         const id = req.params.id;
         const { action } = req.body;
+
         if (!['accepted', 'rejected'].includes(action)) {
-            return res.status(400).send({ message: "Invalid action" });
+            return res.status(400).json({ message: "Invalid action" });
         }
 
         const filter = { _id: new ObjectId(id) };
@@ -57,16 +67,16 @@ const updateApplication = async (req, res) => {
         if (action === 'accepted') {
             const application = await applicationCollection.findOne(filter);
             if (!application) {
-                return res.status(404).send({ message: "Application not found" });
+                return res.status(404).json({ message: "Application not found" });
             }
 
             const tempPassword = generatePassword();
 
             await admin.auth().createUser({
                 displayName: application.name,
-                image: application.imageURL,
                 email: application.email,
                 password: tempPassword,
+                photoURL: application.imageURL,
             });
 
             await usersCollection.insertOne({
@@ -86,53 +96,96 @@ const updateApplication = async (req, res) => {
             await transporter.sendMail({
                 from: `"Smart Hostel" <${process.env.EMAIL_USER}>`,
                 to: application.email,
-                subject: "Your Hostel Application Accepted",
-                text: `Hello ${application.name},\n\nYour application has been accepted!\n\nEmail: ${application.email}\nPassword: ${tempPassword}\n\nLogin and update your password immediately.`,
+                subject: "🎉 Hostel Application Accepted",
+                text: `Hello ${application.name},\n\nYour hostel application has been accepted!\n\nLogin Credentials:\nEmail: ${application.email}\nPassword: ${tempPassword}\n\nPlease log in and change your password immediately.`,
             });
         }
 
-        res.send(result);
+        res.json({ message: `Application ${action}`, result });
     } catch (error) {
-        console.error("Error updating application:", error);
-        res.status(500).send({ message: "Internal Server Error" });
+        console.error("Update Application Error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
+//  Ai roommate Suggestion
 
-// Suggest seat based on preferences
 const postApplicationSuggest = async (req, res) => {
     try {
-        const { department, isQuiet, sleepTime, studyTime, isSmoker, cleanliness } = req.body;
+        const {
+            department,
+            rateStudyTime,
+            morningStudyStart,
+            morningStudyEnd,
+            nightStudyStart,
+            nightStudyEnd,
+            nightSleepStart,
+            nightSleepEnd,
+            isSmoker,
+            cleaningPreference,
+            noiseSensitivity,
+        } = req.body;
 
-        // accepted applications
         const applications = await applicationCollection.find({ status: "accepted" }).toArray();
 
         let bestMatch = null;
-        let bestScore = -1;
-        const maxScore = 8;
+        let bestScore = -Infinity;
+        const maxScore = 70;
 
         applications.forEach((app) => {
             let score = 0;
 
-            // Department match
-            if (app.department === department) score += 2;
+            // Department
+            if (app.department === department) score += 5;
 
-            if (app.isQuiet === isQuiet) score += 1;
-            if (app.isSmoker === isSmoker) score += 2;
+            // Preferred Study Time
+            if (app.rateStudyTime === rateStudyTime) score += 10;
+            else score -= 5;
 
-            const appSleepHour = parseInt(app.sleepTime.split(":")[0]);
-            const formSleepHour = parseInt(sleepTime.split(":")[0]);
-            const sleepDiff = Math.min(Math.abs(appSleepHour - formSleepHour), 4);
-            score += Math.max(0, 1 - sleepDiff / 4);
+            // Morning Study Time
+            if (morningStudyStart && morningStudyEnd && app.morningStudyStart && app.morningStudyEnd) {
+                const userStart = parseInt(morningStudyStart.split(":")[0], 10);
+                const userEnd = parseInt(morningStudyEnd.split(":")[0], 10);
+                const appStart = parseInt(app.morningStudyStart.split(":")[0], 10);
+                const appEnd = parseInt(app.morningStudyEnd.split(":")[0], 10);
+                const diff = Math.abs(userStart - appStart) + Math.abs(userEnd - appEnd);
+                score += Math.max(0, 5 - diff);
 
-            const appStudyHour = parseInt(app.studyTime.split(":")[0]);
-            const formStudyHour = parseInt(studyTime.split(":")[0]);
-            const studyDiff = Math.min(Math.abs(appStudyHour - formStudyHour), 4);
-            score += Math.max(0, 1 - studyDiff / 4);
+            }
 
-            const cleanDiff = Math.abs(parseInt(app.cleanliness) - parseInt(cleanliness));
-            score += Math.max(0, 1 - cleanDiff / 4); // max 1 point
+            // Night Study Time
+            if (nightStudyStart && nightStudyEnd && app.nightStudyStart && app.nightStudyEnd) {
+                const userStart = parseInt(nightStudyStart.split(":")[0], 10);
+                const userEnd = parseInt(nightStudyEnd.split(":")[0], 10);
+                const appStart = parseInt(app.nightStudyStart.split(":")[0], 10);
+                const appEnd = parseInt(app.nightStudyEnd.split(":")[0], 10);
+                const diff = Math.abs(userStart - appStart) + Math.abs(userEnd - appEnd);
+                score += Math.max(0, 5 - diff);
+            }
 
+            // Night Sleep Time
+            if (nightSleepStart && nightSleepEnd && app.nightSleepStart && app.nightSleepEnd) {
+                const userStart = parseInt(nightSleepStart.split(":")[0], 10);
+                const userEnd = parseInt(nightSleepEnd.split(":")[0], 10);
+                const appStart = parseInt(app.nightSleepStart.split(":")[0], 10);
+                const appEnd = parseInt(app.nightSleepEnd.split(":")[0], 10);
+                const diff = Math.abs(userStart - appStart) + Math.abs(userEnd - appEnd);
+                score += Math.max(0, 5 - diff);
+            }
+
+            // Cleaning Preference
+            const cleaningScoreMap = { "always": 10, "weekly": 7, "none": 3 };
+            score += (cleaningScoreMap[app.cleaningPreference] || 0);
+
+            // Noise Sensitivity
+            const noiseScoreMap = { "low": 5, "medium": 8, "high": 10 };
+            score += (noiseScoreMap[app.noiseSensitivity] || 0);
+
+            // Smoking Habit
+            if (isSmoker === "no" && app.isSmoker === "no") score += 10;
+            else if (isSmoker === "yes" && app.isSmoker === "yes") score += 0;
+
+            // Highest score
             if (score > bestScore) {
                 bestScore = score;
                 bestMatch = app;
@@ -142,11 +195,9 @@ const postApplicationSuggest = async (req, res) => {
         let suggestedSeat = null;
         let matchPercent = 0;
         let matchWith = null;
-
         const MATCH_THRESHOLD = 0.5;
 
-        // Only suggest seat 
-        if (bestMatch && (bestScore / maxScore) >= MATCH_THRESHOLD) {
+        if (bestMatch && bestScore / maxScore >= MATCH_THRESHOLD) {
             const room = await roomsCollection.findOne({ roomNumber: bestMatch.roomNumber });
             if (room) {
                 const availableSeat = room.capacity.find(seat => !room.booked.includes(seat));
@@ -158,59 +209,44 @@ const postApplicationSuggest = async (req, res) => {
             }
         }
 
-        res.send({
-            suggestedSeat,
-            matchWith,
-            matchPercent,
-        });
-
+        res.json({ suggestedSeat, matchPercent, matchWith });
     } catch (error) {
-        console.error(error);
-        res.status(500).send({ message: "Error suggesting seat" });
+        console.error("AI Suggest Error:", error);
+        res.status(500).json({ message: "Error suggesting seat" });
     }
 };
 
-// application
-const applicationPatch = async (req, res) => {
+//  Final Applications (Step 3)
+
+const finalizeApplication = async (req, res) => {
     try {
-        const { email, name, ...rest } = req.body;
+        const { email, roomNumber, seatNumber } = req.body;
 
-        if (!email || !name) {
-            return res.status(400).send({ message: "Name and email are required" });
+        const existing = await applicationCollection.findOne({ email });
+        if (!existing) {
+            return res.status(404).json({ message: "No application found" });
         }
 
-        const existingApplication = await applicationCollection.findOne({ email });
-
-        if (!existingApplication) {
-            return res.status(404).send({ message: "No application found for this email" });
-        }
-
-        if (["pending", "accepted"].includes(existingApplication.status)) {
-            return res.status(400).send({
-                message: `Your application is already ${existingApplication.status}`
-            });
+        if (["pending", "accepted"].includes(existing.status)) {
+            return res.status(400).json({ message: `Already ${existing.status}` });
         }
 
         const updateDoc = {
             $set: {
-                ...rest,
-                name,
+                roomNumber,
+                seatNumber,
+                selectedSeat: `${roomNumber}-${seatNumber}`,
                 status: "pending",
                 updatedAt: new Date(),
             },
         };
 
-        const result = await applicationCollection.updateOne(
-            { email },
-            updateDoc
-        );
-
-        res.status(200).send({ message: "Application moved to pending", result });
+        const result = await applicationCollection.updateOne({ email }, updateDoc);
+        res.json({ message: "Application finalized and pending approval", result });
     } catch (error) {
-        console.error("Error updating application:", error);
-        res.status(500).send({ message: "Internal Server Error" });
+        console.error("Finalize Application Error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
-
-module.exports = { createApplication, getApplications, updateApplication, postApplicationSuggest, applicationPatch };
+module.exports = { createApplication, getApplications, updateApplication, postApplicationSuggest, finalizeApplication, };

@@ -1,195 +1,133 @@
-const paymentsCollection = require('../models/paymentModel');
-const mealBookingsCollection = require('../models/mealBookingModel'); 
-const usersCollection = require('../models/userModel');
+const SSLCommerzPayment = require("sslcommerz-lts");
+const paymentsCollection = require("../models/paymentModel"); // MongoDB collection
+require("dotenv").config();
 
-const createPayment = async (req, res) => {
-    const { userName, studentId, email, month, paymentMethod, status } = req.body;
+const store_id = process.env.SSLCOMMERZ_STORE_ID;
+const store_passwd = process.env.SSLCOMMERZ_STORE_PASS;
+const is_live = process.env.IS_LIVE === "true";
 
-    try {
-        if (!month) return res.status(400).send({ message: "Month is required" });
+// Initialize Online Payment
+exports.initPayment = async (req, res) => {
+  const { total, email, userName, studentId, month, roomRent, mealCost } = req.body;
 
-        //Check if payment already exists
-        const existingPayment = await paymentsCollection.findOne({ email, month });
-        if (existingPayment) {
-            return res.status(400).send({
-                message: "Payment for this month already done",
-                payment: existingPayment
-            });
-        }
+  if (!total || !email || !userName || !studentId || !month)
+    return res.status(400).json({ message: "Missing required fields" });
 
-        const [year, monthNumber] = month.split("-");
-        const startDate = new Date(year, monthNumber - 1, 1);
-        const endDate = new Date(year, monthNumber, 1);
+  const tran_id = `txn_${Date.now()}`;
+  const data = {
+    total_amount: total,
+    currency: "BDT",
+    tran_id,
+    success_url: `${process.env.BASE_URL}/payments/success`,
+    fail_url: `${process.env.BASE_URL}/payments/fail`,
+    cancel_url: `${process.env.BASE_URL}/payments/cancel`,
+    ipn_url: `${process.env.BASE_URL}/payments/ipn`,
+    shipping_method: "NO",
+    product_name: "Hostel Fee",
+    product_category: "Service",
+    product_profile: "general",
+    cus_name: userName,
+    cus_email: email,
+    cus_add1: "Dhaka",
+    cus_city: "Dhaka",
+    cus_country: "Bangladesh",
+    cus_phone: "01700000000",
+  };
 
-        const mealBookings = await mealBookingsCollection
-            .find({ email, date: { $gte: startDate, $lt: endDate } })
-            .toArray();
-
-        let totalMealCost = 0;
-        mealBookings.forEach(b => {
-            b.meals.forEach(m => {
-                if (m.booked) totalMealCost += m.price;
-            });
-        });
-
-        const roomRent = 4500;
-        const total = roomRent + totalMealCost;
-
-        const payment = {
-            userName,
-            studentId,
-            email,
-            month,
-            roomRent,
-            mealCost: totalMealCost,
-            total,
-            paymentMethod: paymentMethod || "Cash",
-            status: status || "Paid",
-            createdAt: new Date()
-        };
-
-        await paymentsCollection.insertOne(payment);
-        res.send({
-            message: "Payment added successfully",
-            payment
-        });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send({ message: "Failed to add payment" });
-    }
-};
-
-const getAllPayments = async (req, res) => {
-    try {
-        const { month } = req.query; 
-        let query = {};
-
-        if(month) {
-            const [year, mon] = month.split("-");
-            const startDate = new Date(year, mon - 1, 1);
-            const endDate = new Date(year, mon, 1);
-            query.createdAt = { $gte: startDate, $lt: endDate };
-        }
-
-        const result = await paymentsCollection.find(query).toArray();
-        res.send(result);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send({ message: "Failed to fetch payments" });
-    }
-};
-
-
-// User payments
-const getPaymentsByEmail = async (req, res) => {
-    const email = req.query.email;
-    try {
-        const result = await paymentsCollection.find({ email }).toArray();
-        res.send(result);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send({ message: "Failed to fetch user payments" });
-    }
-};
-
-// user monthy payments history
-const getCurrentMonthPayment = async (req, res) => {
-    const email = req.query.email;
-    if (!email) return res.status(400).send({ message: "Email is required" });
-
-    try {
-        const now = new Date();
-        const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-
-        const payment = await paymentsCollection.findOne({
-            email,
-            createdAt: { $gte: startDate, $lt: endDate }
-        });
-
-        if (!payment) {
-            return res.send({ message: "No payment found for this month", payment: null });
-        }
-
-        res.send({ payment });
-    } catch (err) {
-        console.error(err);
-        res.status(500).send({ message: "Failed to fetch payment history" });
-    }
-};
-
-const getCurrentMonthPaymentsSummary = async (req, res) => {
   try {
-    const now = new Date();
-    const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+    const apiResponse = await sslcz.init(data);
 
-    //Current month payments per user
-    const currentMonthPayments = await paymentsCollection.aggregate([
-      {
-        $match: {
-          createdAt: { $gte: startDate, $lt: endDate }
-        }
-      },
-      {
-        $group: {
-          _id: "$email",
-          totalPaid: { $sum: "$total" },
-          paymentCount: { $sum: 1 },
-          status: { $first: "$status" }
-        }
-      }
-    ]).toArray();
+    if (apiResponse?.GatewayPageURL) {
+      await paymentsCollection.insertOne({
+        email,
+        userName,
+        studentId,
+        month,
+        roomRent,
+        mealCost,
+        amount: total,
+        method: "Online",
+        status: "Pending",
+        tran_id,
+        date: new Date(),
+      });
 
-    //All normal users
-    const normalUsers = await usersCollection.find({ role: { $ne: "admin" } }).toArray();
-
-    const totalUsers = normalUsers.length;
-
-    const paidEmails = currentMonthPayments
-      .filter(p => p.status === "Paid")
-      .map(p => p._id);
-
-    const unpaidUsers = normalUsers.filter(u => !paidEmails.includes(u.email));
-
-    res.send({
-      totalUsers,
-      paidCount: paidEmails.length,
-      unpaidCount: unpaidUsers.length,
-      currentMonthPayments
-    });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ message: "Failed to fetch current month payment summary" });
+      return res.status(200).json({ url: apiResponse.GatewayPageURL });
+    } else {
+      return res.status(400).json({ message: "SSLCommerz initialization failed" });
+    }
+  } catch (error) {
+    console.error("SSLCommerz init error:", error);
+    return res.status(500).json({ message: "Payment initialization error" });
   }
 };
 
-// unpaid
-const getCurrentMonthUnpaidUsers = async (req, res) => {
+// Payment Success
+exports.handleSuccess = async (req, res) => {
   try {
-    const now = new Date();
-    const startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const tran_id = req.body.tran_id || req.query.tran_id;
+    if (!tran_id) return res.redirect(`${process.env.CLIENT_URL}/payment-fail`);
 
-    const normalUsers = await usersCollection.find({ role: { $ne: "admin" } }).toArray();
-
-    const currentMonthPayments = await paymentsCollection.find({
-      createdAt: { $gte: startDate, $lt: endDate },
-      status: "Paid"
-    }).toArray();
-
-    const paidEmails = currentMonthPayments.map(p => p.email);
-
-    const unpaidUsers = normalUsers.filter(u => !paidEmails.includes(u.email));
-
-    res.send({ unpaidUsers });
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).send({ message: "Failed to fetch unpaid users" });
+    await paymentsCollection.updateOne({ tran_id }, { $set: { status: "Paid" } });
+    res.redirect(`${process.env.CLIENT_URL}/payment-success`);
+  } catch (error) {
+    console.error(error);
+    res.redirect(`${process.env.CLIENT_URL}/payment-fail`);
   }
 };
 
-module.exports = { createPayment, getAllPayments, getPaymentsByEmail,getCurrentMonthPayment,getCurrentMonthPaymentsSummary,getCurrentMonthUnpaidUsers  };
+// Payment Fail
+exports.handleFail = async (req, res) => {
+  try {
+    const tran_id = req.body.tran_id || req.query.tran_id;
+    if (tran_id) await paymentsCollection.updateOne({ tran_id }, { $set: { status: "Failed" } });
+    res.redirect(`${process.env.CLIENT_URL}/payment-fail`);
+  } catch (error) {
+    console.error(error);
+    res.redirect(`${process.env.CLIENT_URL}/payment-fail`);
+  }
+};
+
+// Payment Cancel
+exports.handleCancel = async (req, res) => {
+  try {
+    const tran_id = req.body.tran_id || req.query.tran_id;
+    if (tran_id) await paymentsCollection.updateOne({ tran_id }, { $set: { status: "Cancelled" } });
+    res.redirect(`${process.env.CLIENT_URL}/payment-cancel`);
+  } catch (error) {
+    console.error(error);
+    res.redirect(`${process.env.CLIENT_URL}/payment-cancel`);
+  }
+};
+
+// IPN (optional)
+exports.handleIPN = async (req, res) => {
+  console.log("IPN Received:", req.body);
+  res.status(200).send("IPN OK");
+};
+
+// Get Payments by Email
+exports.getPaymentsByEmail = async (req, res) => {
+  try {
+    const email = req.query.email;
+    if (!email) return res.status(400).json({ message: "Email required" });
+
+    const payments = await paymentsCollection.find({ email }).sort({ date: -1 }).toArray();
+    res.status(200).json(payments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch user payments" });
+  }
+};
+
+// Get All Payments (Admin)
+exports.getAllPayments = async (req, res) => {
+  try {
+    const payments = await paymentsCollection.find().sort({ date: -1 }).toArray();
+    res.status(200).json(payments);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to fetch payments" });
+  }
+};

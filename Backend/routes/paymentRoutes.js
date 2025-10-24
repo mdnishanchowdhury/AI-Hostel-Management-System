@@ -1,25 +1,32 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { createPayment, getAllPayments, getPaymentsByEmail, getCurrentMonthPayment, getCurrentMonthPaymentsSummary, getCurrentMonthUnpaidUsers } = require('../controllers/paymentController');
-const verifyToken = require('../middlewares/verifyToken');
-const verifyAdmin = require('../middlewares/verifyAdmin');
+const {
+  initPayment,
+  handleSuccess,
+  handleFail,
+  handleCancel,
+  handleIPN,
+  getPaymentsByEmail,
+  getAllPayments,
+} = require("../controllers/paymentController");
 
-// payment create
-router.post('/',verifyToken,verifyAdmin, createPayment); 
+const verifyToken = require("../middlewares/verifyToken");
+const verifyAdmin = require("../middlewares/verifyAdmin");
 
-// All payment list
-router.get('/',verifyToken,verifyAdmin, getAllPayments);
+// Payment Init
+router.post("/init", verifyToken, initPayment);
 
-// get payment email check 
-router.get('/user',verifyToken, getPaymentsByEmail);
+// SSLCommerz Responses
+router.post("/success", handleSuccess);
+router.get("/success", handleSuccess);
+router.post("/fail", handleFail);
+router.get("/fail", handleFail);
+router.post("/cancel", handleCancel);
+router.get("/cancel", handleCancel);
+router.post("/ipn", handleIPN);
 
-// user monthly history
-router.get('/current-month',verifyToken,verifyAdmin, getCurrentMonthPayment);
-
-// Current month payment summary
-router.get('/summary/current-month',verifyToken,verifyAdmin, getCurrentMonthPaymentsSummary);
-
-// unpaid
-router.get("/unpaid",verifyToken,verifyAdmin, getCurrentMonthUnpaidUsers);
+// Get Payments
+router.get("/user", verifyToken, getPaymentsByEmail);
+router.get("/", verifyToken, verifyAdmin, getAllPayments);
 
 module.exports = router;

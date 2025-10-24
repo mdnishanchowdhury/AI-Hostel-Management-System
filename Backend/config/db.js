@@ -12,10 +12,10 @@ const client = new MongoClient(uri, {
 
 const connectDB = async () => {
   try {
-    // await client.connect();
-    // console.log("MongoDB connected successfully!");
+    await client.connect();
+    console.log("MongoDB connected successfully!");
   } catch (err) {
-    // console.error("MongoDB connection error:", err);
+    console.error("MongoDB connection error:", err);
   }
 };
 
