@@ -41,7 +41,7 @@ const roomsPost = async (req, res) => {
         res.status(500).send({ message: "Failed to create room" });
     }
 };
-// delete room
+// delete rooms
 const roomsDelete = async (req, res) => {
     const { roomId } = req.params;
 
