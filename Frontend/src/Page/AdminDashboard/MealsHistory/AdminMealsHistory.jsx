@@ -62,17 +62,6 @@ function AdminMealsHistory() {
             className="border border-gray-300 px-3 py-2 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
           />
 
-          {/* <button
-            onClick={() => refetch()}
-            disabled={isLoading}
-            className={`px-5 py-2 rounded-lg font-medium text-white shadow-md transition ${isLoading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700"
-              }`}
-          >
-            {isLoading ? "Loading..." : "Search"}
-          </button> */}
-
           <input
             type="text"
             placeholder="Search by email..."

@@ -1,32 +1,35 @@
-import { useEffect, useState } from "react";
-import { MdDelete } from "react-icons/md";
-import useAxiosSecure from "../../../Hook/useAxiosSecure";
+import { useEffect, useState, useMemo } from "react";
 import Swal from "sweetalert2";
+import useAxiosSecure from "../../../Hook/useAxiosSecure";
+import StatsCards from "../../../Components/AdminDashboard/AdminRooms/StatsCards";
+import RoomOccupantsModal from "../../../Components/AdminDashboard/AdminRooms/RoomOccupantsModal";
+import StatsModal from "../../../Components/AdminDashboard/AdminRooms/StatsModal";
+import RoomsTable from "../../../Components/AdminDashboard/AdminRooms/RoomsTable";
 
 function AdminRooms() {
     const axiosSecure = useAxiosSecure();
     const [rooms, setRooms] = useState([]);
-
-    // Fetch all rooms
-    const fetchRooms = async () => {
-        try {
-            const res = await axiosSecure.get("/rooms");
-            setRooms(res.data);
-        } catch (err) {
-            console.error(err);
-            Swal.fire({
-                icon: "error",
-                title: "Failed!",
-                text: "Failed to load rooms!",
-            });
-        }
-    };
+    const [allOccupants, setAllOccupants] = useState([]);
+    const [selectedRoom, setSelectedRoom] = useState(null);
+    const [modalType, setModalType] = useState("");
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchRooms();
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                const [roomsRes, occupantsRes] = await Promise.all([axiosSecure.get("/rooms"), axiosSecure.get("/applications")]);
+                setRooms(roomsRes.data);
+                setAllOccupants(occupantsRes.data);
+            } catch {
+                Swal.fire({ icon: "error", title: "Failed!", text: "Failed to load data!" });
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
     }, []);
 
-    // Delete a room
     const handleDelete = (roomId) => {
         Swal.fire({
             title: "Are you sure?",
@@ -40,62 +43,83 @@ function AdminRooms() {
             if (result.isConfirmed) {
                 try {
                     await axiosSecure.delete(`/rooms/${roomId}`);
-                    setRooms(rooms.filter((room) => room._id !== roomId));
+                    setRooms((prev) => prev.filter((room) => room._id !== roomId));
                     Swal.fire("Deleted!", "Room has been deleted.", "success");
-                } catch (err) {
-                    console.error(err);
+                } catch {
                     Swal.fire("Failed!", "Failed to delete room.", "error");
                 }
             }
         });
     };
 
+    const bookedRooms = useMemo(() => rooms.filter((room) => allOccupants.some((u) => u.roomNumber === room.roomNumber)), [rooms, allOccupants]);
+    const vacantRooms = useMemo(() => rooms.filter((room) => !allOccupants.some((u) => u.roomNumber === room.roomNumber)), [rooms, allOccupants]);
+    const totalRooms = rooms.length;
+    const bookedRoomsCount = bookedRooms.length;
+    const vacantRoomsCount = vacantRooms.length;
+    const totalSeats = useMemo(() => rooms.reduce((acc, room) => acc + room.capacity.length, 0), [rooms]);
+    const bookedSeats = allOccupants.length;
+
+    const vacantSeatsMap = useMemo(() => {
+        return rooms.reduce((acc, room) => {
+            acc[room.roomNumber] = room.capacity.filter(
+                (seat) => !allOccupants.find((u) => u.roomNumber === room.roomNumber && u.seatNumber === seat)
+            );
+            return acc;
+        }, {});
+    }, [rooms, allOccupants]);
+
+    const closeModal = () => {
+        setSelectedRoom(null);
+        setModalType("");
+    };
+
+    const stats = [
+        { label: "Total Rooms", value: totalRooms, type: "totalRooms", bg: "bg-gray-300", text: "text-gray-800" },
+        { label: "Booked Rooms", value: bookedRoomsCount, type: "bookedRooms", bg: "bg-green-500", text: "text-white" },
+        { label: "Vacant Rooms", value: vacantRoomsCount, type: "vacantRooms", bg: "bg-blue-500", text: "text-white" },
+        { label: "Total Seats", value: totalSeats, type: "totalSeats", bg: "bg-gray-300", text: "text-gray-800" },
+        { label: "Booked Seats", value: bookedSeats, type: "bookedSeats", bg: "bg-green-500", text: "text-white" },
+        { label: "Vacant Seats", value: totalSeats - bookedSeats, type: "vacantSeats", bg: "bg-blue-500", text: "text-white" },
+    ];
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 p-6">
+        <div className="md:p-6 bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 min-h-screen rounded-2xl">
 
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 bg-white/80 shadow-md rounded-2xl p-6">
+                <h1 className="text-3xl font-bold text-gray-800 text-center">Room Management</h1>
+            </div>
 
-            <div className="max-w-6xl mx-auto bg-white/70 backdrop-blur-md p-6 rounded-3xl shadow-xl space-y-6">
+            {/* stats cards */}
+            <StatsCards stats={stats} onClick={setModalType} ></StatsCards>
 
-                <h2 className="text-2xl md:text-4xl font-bold mb-10 text-center text-gray-800">
-                    Hostel Room Management
-                </h2>
-                <div className="overflow-x-auto">
-                    <table className="min-w-full bg-white border rounded-2xl shadow-lg overflow-hidden">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                <th className="text-left py-3 px-6 font-medium text-gray-700">Room Number</th>
-                                <th className="text-left py-3 px-6 font-medium text-gray-700">Hostel</th>
-                                <th className="text-left py-3 px-6 font-medium text-gray-700">Capacity</th>
-                                <th className="text-center py-3 px-6 font-medium text-gray-700">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {rooms.map((room) => (
-                                <tr key={room._id} className="border-b hover:bg-gray-50 transition duration-200">
-                                    <td className="py-3 px-6 text-gray-800">{room.roomNumber}</td>
-                                    <td className="py-3 px-6 text-gray-800">{room.hostel}</td>
-                                    <td className="py-3 px-6 text-gray-800">{room.capacity.join(", ")}</td>
-                                    <td className="py-3 px-6 text-center">
-                                        <button
-                                            onClick={() => handleDelete(room._id)}
-                                            className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-400 transition-transform transform hover:scale-110"
-                                            title="Delete Room"
-                                        >
-                                            <MdDelete className="text-red-600 w-5 h-5" />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
-                            {rooms.length === 0 && (
-                                <tr>
-                                    <td colSpan={4} className="text-center py-8 text-gray-400 text-lg">
-                                        No rooms available.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+            {/* Rooms table */}
+            <RoomsTable rooms={rooms} onView={setSelectedRoom} onDelete={handleDelete} loading={loading} ></RoomsTable>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {selectedRoom && (
+
+                    // room model
+                    <RoomOccupantsModal
+                        roomNumber={selectedRoom}
+                        occupants={allOccupants.filter((u) => u.roomNumber === selectedRoom)}
+                        onClose={closeModal}
+                    ></RoomOccupantsModal>
+                )}
+
+                {modalType && ["bookedRooms", "vacantRooms", "bookedSeats", "vacantSeats"].includes(modalType) && (
+
+                    // stats Model
+                    <StatsModal
+                        type={modalType}
+                        bookedRooms={bookedRooms}
+                        vacantRooms={vacantRooms}
+                        allOccupants={allOccupants}
+                        vacantSeatsMap={vacantSeatsMap}
+                        rooms={rooms}
+                        onClose={closeModal}
+                    ></StatsModal>
+                )}
             </div>
         </div>
     );

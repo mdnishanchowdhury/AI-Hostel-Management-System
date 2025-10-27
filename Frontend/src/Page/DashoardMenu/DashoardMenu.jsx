@@ -4,8 +4,8 @@ import {FaHome,FaBed,FaUtensils,FaMoneyBill,FaUser,FaCog,FaSignOutAlt,FaHistory,
 import useAdmin from "../../Hook/useAdmin";
 import useAuth from "../../Hook/useAuth";
 import Swal from "sweetalert2";
-import { IoAdd } from "react-icons/io5";
-import { DeleteIcon } from "lucide-react";
+import { IoAddCircle } from "react-icons/io5";
+import { MdMeetingRoom } from "react-icons/md";
 
 const DashoardMenu = ({ onLinkClick }) => {
   const location = useLocation();
@@ -34,8 +34,8 @@ const DashoardMenu = ({ onLinkClick }) => {
       { path: `${base}`, label: "Dashboard", icon: <FaTachometerAlt /> },
       { path: `${base}/application`, label: "Application", icon: <FaBookOpen /> },
       { path: `${base}/allUsers`, label: "All Users", icon: <FaUsers /> },
-      { path: `${base}/addRoom`, label: "Add Room", icon: <IoAdd /> },
-      { path: `${base}/adminRooms`, label: "Rooms", icon: <DeleteIcon /> },
+      { path: `${base}/addRoom`, label: "Add Room", icon: <IoAddCircle /> },
+      { path: `${base}/adminRooms`, label: "Rooms", icon: <MdMeetingRoom /> },
       { path: `${base}/autobooking`, label: "Auto Booking", icon: <FaCalendarAlt /> },
       { path: `${base}/dailyBookedMeals`, label: "Daily Meals", icon: <FaUtensils /> },
       { path: `${base}/mealsHistory`, label: "Meals History", icon: <FaHistory /> },

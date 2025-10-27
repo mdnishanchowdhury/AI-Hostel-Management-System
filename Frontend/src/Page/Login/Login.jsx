@@ -15,7 +15,7 @@ function Login() {
         const email = form.email.value;
         const password = form.password.value;
         signInUser(email, password)
-            .then(()=> {
+            .then(() => {
                 Swal.fire({
                     position: "top-end",
                     icon: "success",
@@ -58,6 +58,14 @@ function Login() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#f87171] to-[#fb923c] px-3 md:px-0">
             <div className="card w-full max-w-md bg-white shadow-xl rounded-2xl p-6 md:p-10">
                 <h2 className="text-4xl font-medium font-poppins text-center text-gray-800 mb-6">Sign in</h2>
+
+                <h2 className="text-2xl">User</h2>
+                <h2>Email: nishanchowdhury4130@gmail.com</h2>
+                <h2>Password: Nishan@12</h2>
+
+                <h2 className="text-2xl">Admin</h2>
+                <h2>Email: nishanchowdhury.cse@gmail.com</h2>
+                <h2>Password: Nishan@12</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="form-control">
