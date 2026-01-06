@@ -25,11 +25,9 @@ import UserPayment from "../Page/UserDashboard/UserPayment.jsx/UserPayment";
 import UserPaymentHistory from "../Page/UserDashboard/UserPaymentHistory/UserPaymentHistory";
 import AdminPaymentsHistory from "../Page/AdminDashboard/PaymentsHistory/AdminPaymentsHistory";
 import DailyBookedMeals from "../Page/AdminDashboard/DailyBookedMeals/DailyBookedMeals";
-import PaymentSuccess from "../Page/UserDashboard/UserPayment.jsx/PaymentSuccess";
-import PaymentFail from "../Page/UserDashboard/UserPayment.jsx/PaymentFail";
-import PaymentCancel from "../Page/UserDashboard/UserPayment.jsx/PaymentCancel";
 import AddRoom from "../Page/AdminDashboard/AddRoom/AddRoom";
 import AdminRooms from "../Page/AdminDashboard/AdminRooms/AdminRooms";
+import PaymentRedirect from "../Page/UserDashboard/UserPayment.jsx/PaymentRedirect";
 
 export const router = createBrowserRouter([
 
@@ -75,14 +73,18 @@ export const router = createBrowserRouter([
             },
             // SSLCommerz redirect pages
             {
-                path: 'payment-success', element: <PaymentSuccess />
+                path: 'payment-success',
+                element: <PaymentRedirect status="success" />
             },
             {
-                path: 'payment-fail', element: <PaymentFail />
+                path: 'payment-fail',
+                element: <PaymentRedirect status="fail" />
             },
             {
-                path: 'payment-cancel', element: <PaymentCancel />
+                path: 'payment-cancel',
+                element: <PaymentRedirect status="cancel" />
             },
+
         ]
     },
     {

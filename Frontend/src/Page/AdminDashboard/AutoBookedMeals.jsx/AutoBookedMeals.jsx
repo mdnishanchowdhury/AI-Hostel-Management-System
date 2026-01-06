@@ -1,19 +1,47 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useAxiosSecure from "../../../Hook/useAxiosSecure";
 import Swal from "sweetalert2";
+import { FaCheckCircle } from "react-icons/fa";
 
 function AutoBookedMeals() {
   const [loading, setLoading] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState(
-    new Date().toISOString().slice(0, 7)
+    new Date().toISOString().slice(0, 7) // YYYY-MM default
   );
+  const [alreadySeeded, setAlreadySeeded] = useState(false);
   const axiosSecure = useAxiosSecure();
+
+  // Check if the selected month is already seeded
+  const checkMonthSeeded = async (month) => {
+    try {
+      const [year, monthNumber] = month.split("-");
+      const res = await axiosSecure.get(
+        `/bookings/check-month?month=${monthNumber}&year=${year}`
+      );
+      setAlreadySeeded(res.data.seeded); // true/false
+    } catch (err) {
+      console.error(err);
+      setAlreadySeeded(false);
+    }
+  };
+
+  // Run check whenever the month changes
+  useEffect(() => {
+    if (selectedMonth) checkMonthSeeded(selectedMonth);
+  }, [selectedMonth]);
 
   const handleSeedMeals = async () => {
     if (!selectedMonth) {
       return Swal.fire({
         icon: "warning",
         title: "Please select a month first!",
+      });
+    }
+
+    if (alreadySeeded) {
+      return Swal.fire({
+        icon: "info",
+        title: "Meals already seeded for this month",
       });
     }
 
@@ -31,8 +59,10 @@ function AutoBookedMeals() {
 
     setLoading(true);
     try {
+      const [year, month] = selectedMonth.split("-");
       const res = await axiosSecure.post("/bookings/seed", {
-        month: selectedMonth,
+        month: parseInt(month), // e.g., 1 for January
+        year: parseInt(year),
       });
 
       Swal.fire({
@@ -40,6 +70,8 @@ function AutoBookedMeals() {
         title: "Success!",
         text: res.data.message,
       });
+
+      setAlreadySeeded(true); // mark as seeded
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -60,16 +92,13 @@ function AutoBookedMeals() {
             Auto Seed Monthly Meals
           </h1>
           <p className="text-gray-600 mt-2 text-sm">
-            Automatically create meal bookings for all non-admin users.
+            Automatically create meal bookings for all non-admin users for the selected month.
           </p>
         </div>
 
         {/* Month Selector */}
         <div className="mb-6">
-          <label
-            htmlFor="month"
-            className="block text-gray-700 font-medium mb-2"
-          >
+          <label htmlFor="month" className="block text-gray-700 font-medium mb-2">
             Select Month
           </label>
           <input
@@ -84,21 +113,30 @@ function AutoBookedMeals() {
         {/* Action Button */}
         <button
           onClick={handleSeedMeals}
-          disabled={loading}
-          className={`w-full py-3 rounded-xl font-semibold text-white text-lg transition-all duration-300 ${loading
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02] shadow-md hover:shadow-lg"
-            }`}
+          disabled={loading || alreadySeeded}
+          className={`w-full py-3 rounded-xl font-semibold text-white text-lg flex items-center justify-center gap-2 ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : alreadySeeded
+              ? "bg-green-500 cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02] shadow-md hover:shadow-lg"
+          }`}
         >
-          {loading ? "Seeding..." : `Seed Meals for ${selectedMonth}`}
+          {loading
+            ? "Seeding..."
+            : alreadySeeded
+            ? <>
+                <FaCheckCircle /> Meals Already Seeded for {selectedMonth}
+              </>
+            : `Seed Meals for ${selectedMonth}`}
         </button>
 
-        {/* Info Section */}
+        {/* Info */}
         <div className="mt-8 bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-blue-800">
-          <p className="font-semibold mb-1"> Note:</p>
+          <p className="font-semibold mb-1">Note:</p>
           <ul className="list-disc ml-5 space-y-1">
             <li>Admins are excluded from meal seeding.</li>
-            <li>Ensure the selected month is correct before seeding.</li>
+            <li>Only the selected month will be seeded, no other months.</li>
             <li>This action cannot be undone once completed.</li>
           </ul>
         </div>
@@ -106,4 +144,5 @@ function AutoBookedMeals() {
     </div>
   );
 }
+
 export default AutoBookedMeals;

@@ -8,4 +8,8 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  server: {
+    fs: { strict: false },
+    historyApiFallback: true // important for React Router direct URLs
+  }
 })
