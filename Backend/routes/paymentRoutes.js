@@ -8,25 +8,22 @@ const {
   handleIPN,
   getPaymentsByEmail,
   getAllPayments,
+  getUnpaidUsers,
 } = require("../controllers/paymentController");
 
-const verifyToken = require("../middlewares/verifyToken");
-const verifyAdmin = require("../middlewares/verifyAdmin");
+const verifyToken = require('../middlewares/verifyToken');
+const verifyAdmin = require('../middlewares/verifyAdmin');
 
-// Payment Init
-router.post("/init", verifyToken, initPayment);
-
-// SSLCommerz Responses
+router.post("/init", initPayment);
 router.post("/success", handleSuccess);
-router.get("/success", handleSuccess);
 router.post("/fail", handleFail);
-router.get("/fail", handleFail);
 router.post("/cancel", handleCancel);
-router.get("/cancel", handleCancel);
 router.post("/ipn", handleIPN);
 
-// Get Payments
-router.get("/user", verifyToken, getPaymentsByEmail);
+router.get("/user", getPaymentsByEmail);
+
+// ADMIN
 router.get("/", verifyToken, verifyAdmin, getAllPayments);
+router.get("/unpaid", verifyToken, verifyAdmin, getUnpaidUsers);
 
 module.exports = router;

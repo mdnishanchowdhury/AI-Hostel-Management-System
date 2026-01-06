@@ -1,19 +1,33 @@
 const SSLCommerzPayment = require("sslcommerz-lts");
-const paymentsCollection = require("../models/paymentModel"); // MongoDB collection
+const axios = require("axios");
+const paymentsCollection = require("../models/paymentModel");
 require("dotenv").config();
-
+const usersCollection = require("../models/userModel");
 const store_id = process.env.SSLCOMMERZ_STORE_ID;
 const store_passwd = process.env.SSLCOMMERZ_STORE_PASS;
 const is_live = process.env.IS_LIVE === "true";
 
-// Initialize Online Payment
-exports.initPayment = async (req, res) => {
-  const { total, email, userName, studentId, month, roomRent, mealCost } = req.body;
+// Validate payment with SSLCommerz
+const validatePayment = async (val_id) => {
+  const url = is_live
+    ? "https://securepay.sslcommerz.com/validator/api/validationserverAPI.php"
+    : "https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php";
 
-  if (!total || !email || !userName || !studentId || !month)
+  const response = await axios.get(url, {
+    params: { val_id, store_id, store_passwd, format: "json" },
+  });
+  return response.data;
+};
+
+const initPayment = async (req, res) => {
+  const { email,total, userName, studentId, month, roomRent, mealCost } = req.body;
+
+  if (!total || !email || !userName || !studentId || !month) {
     return res.status(400).json({ message: "Missing required fields" });
+  }
 
-  const tran_id = `txn_${Date.now()}`;
+  const tran_id = `HOSTEL_${month}_${Date.now()}`;
+
   const data = {
     total_amount: total,
     currency: "BDT",
@@ -38,96 +52,166 @@ exports.initPayment = async (req, res) => {
     const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
     const apiResponse = await sslcz.init(data);
 
-    if (apiResponse?.GatewayPageURL) {
-      await paymentsCollection.insertOne({
-        email,
-        userName,
-        studentId,
-        month,
-        roomRent,
-        mealCost,
-        amount: total,
-        method: "Online",
-        status: "Pending",
-        tran_id,
-        date: new Date(),
-      });
-
-      return res.status(200).json({ url: apiResponse.GatewayPageURL });
-    } else {
-      return res.status(400).json({ message: "SSLCommerz initialization failed" });
+    if (!apiResponse?.GatewayPageURL) {
+      return res.status(400).json({ message: "SSL payment initiation failed" });
     }
-  } catch (error) {
-    console.error("SSLCommerz init error:", error);
-    return res.status(500).json({ message: "Payment initialization error" });
+
+    // save payments
+    await paymentsCollection.insertOne({
+      email,
+      userName,
+      studentId,
+      month,
+      roomRent,
+      mealCost,
+      amount: total,
+      method: "Online",
+      status: "Pending",
+      tran_id,
+      createdAt: new Date(),
+    });
+
+    res.status(200).json({ url: apiResponse.GatewayPageURL });
+  } catch (err) {
+    console.error("Init Payment Error:", err);
+    res.status(500).json({ message: "Payment init error" });
   }
 };
 
-// Payment Success
-exports.handleSuccess = async (req, res) => {
+//payment success
+const handleSuccess = async (req, res) => {
   try {
     const tran_id = req.body.tran_id || req.query.tran_id;
-    if (!tran_id) return res.redirect(`${process.env.CLIENT_URL}/payment-fail`);
+    const val_id = req.body.val_id || req.query.val_id;
+    if (!tran_id || !val_id) {
+      return res.redirect(`${process.env.CLIENT_URL}/payment-fail`);
+    }
 
-    await paymentsCollection.updateOne({ tran_id }, { $set: { status: "Paid" } });
-    res.redirect(`${process.env.CLIENT_URL}/payment-success`);
-  } catch (error) {
-    console.error(error);
+    const validation = await validatePayment(val_id);
+
+    if (validation.status === "VALID" || validation.status === "VALIDATED") {
+      await paymentsCollection.updateOne(
+        { tran_id },
+        {
+          $set: {
+            status: "Paid",
+            paidAt: new Date(),
+            val_id,
+            bank_tran_id: validation.bank_tran_id,
+            card_type: validation.card_type,
+          },
+        }
+      );
+      return res.redirect(`${process.env.CLIENT_URL}/dashboard/payments?payment=success`);
+    }
+
+    res.redirect(`${process.env.CLIENT_URL}/payment-fail`);
+  } catch (err) {
+    console.error("Handle Success Error:", err);
     res.redirect(`${process.env.CLIENT_URL}/payment-fail`);
   }
 };
 
-// Payment Fail
-exports.handleFail = async (req, res) => {
+//payment fail
+const handleFail = async (req, res) => {
+  const tran_id = req.body.tran_id || req.query.tran_id;
+  if (tran_id) {
+    await paymentsCollection.updateOne({ tran_id }, { $set: { status: "Failed" } });
+  }
+  res.redirect(`${process.env.CLIENT_URL}/payment-fail`);
+};
+
+// payment cancel
+const handleCancel = async (req, res) => {
+  const tran_id = req.body.tran_id || req.query.tran_id;
+  if (tran_id) {
+    await paymentsCollection.updateOne({ tran_id }, { $set: { status: "Cancelled" } });
+  }
+  res.redirect(`${process.env.CLIENT_URL}/payment-cancel`);
+};
+
+// IPN
+const handleIPN = async (req, res) => {
+  const { tran_id, val_id } = req.body;
+
+  if (!tran_id || !val_id) return res.status(400).send("Invalid IPN");
+
   try {
-    const tran_id = req.body.tran_id || req.query.tran_id;
-    if (tran_id) await paymentsCollection.updateOne({ tran_id }, { $set: { status: "Failed" } });
-    res.redirect(`${process.env.CLIENT_URL}/payment-fail`);
-  } catch (error) {
-    console.error(error);
-    res.redirect(`${process.env.CLIENT_URL}/payment-fail`);
+    const validation = await validatePayment(val_id);
+    if (validation.status === "VALID" || validation.status === "VALIDATED") {
+      await paymentsCollection.updateOne(
+        { tran_id },
+        { $set: { status: "Paid", paidAt: new Date() } }
+      );
+    }
+    res.status(200).send("IPN OK");
+  } catch (err) {
+    console.error("IPN Error:", err);
+    res.status(500).send("IPN Error");
   }
 };
 
-// Payment Cancel
-exports.handleCancel = async (req, res) => {
+// get payments
+const getPaymentsByEmail = async (req, res) => {
   try {
-    const tran_id = req.body.tran_id || req.query.tran_id;
-    if (tran_id) await paymentsCollection.updateOne({ tran_id }, { $set: { status: "Cancelled" } });
-    res.redirect(`${process.env.CLIENT_URL}/payment-cancel`);
-  } catch (error) {
-    console.error(error);
-    res.redirect(`${process.env.CLIENT_URL}/payment-cancel`);
-  }
-};
+    const { email } = req.query; 
 
-// IPN (optional)
-exports.handleIPN = async (req, res) => {
-  console.log("IPN Received:", req.body);
-  res.status(200).send("IPN OK");
-};
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
 
-// Get Payments by Email
-exports.getPaymentsByEmail = async (req, res) => {
-  try {
-    const email = req.query.email;
-    if (!email) return res.status(400).json({ message: "Email required" });
+    const payments = await paymentsCollection
+      .find({ email })
+      .sort({ createdAt: -1 })
+      .toArray();
 
-    const payments = await paymentsCollection.find({ email }).sort({ date: -1 }).toArray();
     res.status(200).json(payments);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to fetch user payments" });
+    console.error("Get Payments Error:", error);
+    res.status(500).json({ message: "Failed to get payments" });
   }
 };
 
-// Get All Payments (Admin)
-exports.getAllPayments = async (req, res) => {
+const getUnpaidUsers = async (req, res) => {
   try {
-    const payments = await paymentsCollection.find().sort({ date: -1 }).toArray();
-    res.status(200).json(payments);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to fetch payments" });
+    const { month } = req.query;
+
+    const paid = await paymentsCollection
+      .find(month ? { month, status: "Paid" } : { status: "Paid" })
+      .project({ email: 1 })
+      .toArray();
+
+    const paidEmails = paid.map(p => p.email);
+
+    const unpaidUsers = await usersCollection.find({
+      role: "user",
+      email: { $nin: paidEmails }
+    }).toArray();
+
+    res.send({ unpaidUsers });
+  } catch (err) {
+    res.status(500).send({ message: "Failed to get unpaid users" });
   }
 };
+
+const getAllPayments = async (req, res) => {
+  try {
+    const { month } = req.query;
+
+    const query = { status: "Paid" };
+    if (month) query.month = month;
+
+    const payments = await paymentsCollection
+      .find(query)
+      .sort({ createdAt: -1 })
+      .toArray();
+
+    res.send(payments);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ message: "Failed to get payments" });
+  }
+};
+
+module.exports = {getPaymentsByEmail,handleIPN ,handleCancel,handleFail,handleSuccess,initPayment,getAllPayments ,getUnpaidUsers };
+

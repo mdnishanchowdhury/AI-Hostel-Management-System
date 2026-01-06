@@ -41,35 +41,52 @@ const updateBooking = async (req, res) => {
 
 // Seed meals for all users
 const seedMealsForAllUsers = async (req, res) => {
-    const usersCollection = require('../models/userModel');
+    const { month, year } = req.body; // month: 1-12
+    if (!month || !year) {
+        return res.status(400).send({ message: "Month & Year required" });
+    }
+
     try {
-        const users = await usersCollection.find().toArray();
-        const today = new Date();
+        const usersCollection = require('../models/userModel');
+        const users = await usersCollection.find({ role: { $ne: "admin" } }).toArray();
+
+        const startDate = new Date(year, month - 1, 1);
+        const endDate = new Date(year, month, 1); // next month first day
 
         for (const user of users) {
             const email = user.email;
 
-            const existing = await mealBookingsCollection.findOne({ email });
-            if (existing) continue;
-
-            const bookings = Array.from({ length: 30 }, (_, i) => {
-                const date = new Date();
-                date.setDate(today.getDate() + i + 1);
-                return {
-                    email,
-                    date,
-                    meals: mealTypes.map((meal) => ({ ...meal, booked: true })),
-                };
+            const exists = await mealBookingsCollection.findOne({
+                email,
+                date: { $gte: startDate, $lt: endDate }
             });
-            await mealBookingsCollection.insertMany(bookings);
+            if (exists) continue;
+
+            const bookings = [];
+            const tempDate = new Date(startDate);
+
+            while (tempDate < endDate) {
+                bookings.push({
+                    email,
+                    date: new Date(tempDate),
+                    meals: mealTypes.map(m => ({ ...m, booked: true }))
+                });
+                tempDate.setDate(tempDate.getDate() + 1);
+            }
+
+            if (bookings.length > 0) {
+                await mealBookingsCollection.insertMany(bookings);
+            }
         }
 
-        res.send({ message: "All users' meals seeded successfully." });
+        res.send({ message: "Meals seeded successfully for selected month only." });
+
     } catch (err) {
         console.error(err);
         res.status(500).send({ message: "Internal Server Error" });
     }
 };
+
 
 // get all bookings
 const getAllBookings = async (req, res) => {
@@ -132,7 +149,7 @@ const getMonthlyMealsHistory = async (req, res) => {
                 userHistory[b.email] = { daily: {}, totalMeals: 0, totalPrice: 0 };
             }
 
-            const day = b.date.toISOString().split('T')[0]; 
+            const day = b.date.toISOString().split('T')[0];
             if (!userHistory[b.email].daily[day]) {
                 userHistory[b.email].daily[day] = { Breakfast: 0, Lunch: 0, Dinner: 0, total: 0 };
             }
@@ -207,4 +224,29 @@ const getUserMealsHistory = async (req, res) => {
 };
 
 
-module.exports = { getBookingsByEmail, updateBooking, seedMealsForAllUsers, getAllBookings, getMonthlyMealsHistory, getUserMealsHistory };
+
+// // GET: check if month is already seeded
+const checkMonthSeeded = async (req, res) => {
+    const { month, year } = req.query;
+    if (!month || !year) {
+        return res.status(400).send({ message: "Month & Year required" });
+    }
+
+    try {
+        const startDate = new Date(year, month - 1, 1);
+        const endDate = new Date(year, month, 1);
+
+        const existing = await mealBookingsCollection.findOne({
+            date: { $gte: startDate, $lt: endDate }
+        });
+
+        res.send({ seeded: Boolean(existing) });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send({ seeded: false });
+    }
+};
+
+
+module.exports = { getBookingsByEmail, updateBooking, seedMealsForAllUsers, getAllBookings, getMonthlyMealsHistory, getUserMealsHistory, checkMonthSeeded };
+

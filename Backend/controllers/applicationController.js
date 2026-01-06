@@ -6,7 +6,7 @@ const admin = require('../config/firebase');
 const transporter = require('../config/nodemailer');
 const generatePassword = require('../utils/generatePassword');
 
-//  Create Apllication (Step 2)
+//  Create Apllication
 
 const createApplication = async (req, res) => {
     try {
@@ -249,4 +249,28 @@ const finalizeApplication = async (req, res) => {
     }
 };
 
-module.exports = { createApplication, getApplications, updateApplication, postApplicationSuggest, finalizeApplication, };
+// Get all applications for a specific room
+const getApplicationsByRoom = async (req, res) => {
+    const { roomNumber } = req.params;
+    try {
+        const occupants = await applicationCollection
+            .find({ roomNumber, status: "accepted" }) // only accepted ones
+            .project({
+                name: 1,
+                studentId: 1,
+                email: 1,
+                roomNumber: 1,
+                seatNumber: 1,
+                hostel: 1,
+                _id: 0,
+            })
+            .toArray();
+
+        res.status(200).send(occupants);
+    } catch (error) {
+        console.error("Error fetching occupants:", error);
+        res.status(500).send({ message: "Failed to fetch occupants" });
+    }
+};
+
+module.exports = { createApplication, getApplications, updateApplication, postApplicationSuggest, finalizeApplication,getApplicationsByRoom };

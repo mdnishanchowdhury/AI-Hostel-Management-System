@@ -1,5 +1,5 @@
 const express = require('express');
-const { createApplication, getApplications, updateApplication, postApplicationSuggest, finalizeApplication } = require('../controllers/applicationController');
+const { createApplication, getApplications, updateApplication, postApplicationSuggest, finalizeApplication, getApplicationsByRoom } = require('../controllers/applicationController');
 const verifyToken = require('../middlewares/verifyToken');
 const verifyAdmin = require('../middlewares/verifyAdmin');
 
@@ -19,5 +19,9 @@ router.patch('/:id', verifyToken, verifyAdmin, updateApplication);
 
 // AI roommate suggestion
 router.post('/suggest', postApplicationSuggest);
+
+// Get applications for a specific room
+router.get('/room/:roomNumber', verifyToken, verifyAdmin, getApplicationsByRoom);
+
 
 module.exports = router;
