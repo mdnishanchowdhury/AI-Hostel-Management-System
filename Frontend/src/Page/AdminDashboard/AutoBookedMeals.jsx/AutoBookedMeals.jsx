@@ -4,40 +4,34 @@ import Swal from "sweetalert2";
 import { FaCheckCircle } from "react-icons/fa";
 
 function AutoBookedMeals() {
-  const [loading, setLoading] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState(
-    new Date().toISOString().slice(0, 7) // YYYY-MM default
-  );
-  const [alreadySeeded, setAlreadySeeded] = useState(false);
   const axiosSecure = useAxiosSecure();
 
-  // Check if the selected month is already seeded
-  const checkMonthSeeded = async (month) => {
+  const today = new Date();
+  const currentYear = today.getFullYear();
+  const currentMonth = (today.getMonth() + 1).toString().padStart(2, "0");
+
+  const [year, setYear] = useState(currentYear);
+  const [month, setMonth] = useState(currentMonth);
+  const [alreadySeeded, setAlreadySeeded] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const checkMonthSeeded = async (year, month) => {
     try {
-      const [year, monthNumber] = month.split("-");
       const res = await axiosSecure.get(
-        `/bookings/check-month?month=${monthNumber}&year=${year}`
+        `/bookings/check-month?month=${month}&year=${year}`
       );
-      setAlreadySeeded(res.data.seeded); // true/false
+      setAlreadySeeded(res.data.seeded);
     } catch (err) {
       console.error(err);
       setAlreadySeeded(false);
     }
   };
 
-  // Run check whenever the month changes
   useEffect(() => {
-    if (selectedMonth) checkMonthSeeded(selectedMonth);
-  }, [selectedMonth]);
+    checkMonthSeeded(year, month);
+  }, [year, month]);
 
   const handleSeedMeals = async () => {
-    if (!selectedMonth) {
-      return Swal.fire({
-        icon: "warning",
-        title: "Please select a month first!",
-      });
-    }
-
     if (alreadySeeded) {
       return Swal.fire({
         icon: "info",
@@ -47,7 +41,7 @@ function AutoBookedMeals() {
 
     const confirmResult = await Swal.fire({
       title: "Confirm Action",
-      text: `This will seed meals for all users (except admins) for ${selectedMonth}.`,
+      text: `This will seed meals for all users (except admins) for ${year}-${month}.`,
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#2563eb",
@@ -59,10 +53,9 @@ function AutoBookedMeals() {
 
     setLoading(true);
     try {
-      const [year, month] = selectedMonth.split("-");
       const res = await axiosSecure.post("/bookings/seed", {
-        month: parseInt(month), // e.g., 1 for January
         year: parseInt(year),
+        month: parseInt(month),
       });
 
       Swal.fire({
@@ -71,7 +64,7 @@ function AutoBookedMeals() {
         text: res.data.message,
       });
 
-      setAlreadySeeded(true); // mark as seeded
+      setAlreadySeeded(true);
     } catch (err) {
       console.error(err);
       Swal.fire({
@@ -83,9 +76,17 @@ function AutoBookedMeals() {
     setLoading(false);
   };
 
+  const yearOptions = Array.from({ length: 5 }, (_, i) => currentYear - i);
+
+  const monthOptions = Array.from({ length: 12 }, (_, i) => {
+    const m = (i + 1).toString().padStart(2, "0");
+    return { value: m, label: new Date(`${currentYear}-${m}-01`).toLocaleString("default", { month: "long" }) };
+  });
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-white to-indigo-100 px-2 rounded-md md:px-4">
       <div className="w-full max-w-xl backdrop-blur-lg bg-white/60 rounded-3xl shadow-xl border border-blue-100 p-10 transition hover:shadow-2xl duration-500">
+
         {/* Header */}
         <div className="text-center mb-8">
           <h1 className="text-3xl font-extrabold text-blue-700 tracking-tight">
@@ -96,39 +97,52 @@ function AutoBookedMeals() {
           </p>
         </div>
 
-        {/* Month Selector */}
-        <div className="mb-6">
-          <label htmlFor="month" className="block text-gray-700 font-medium mb-2">
-            Select Month
-          </label>
-          <input
-            type="month"
-            id="month"
-            value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
-          />
+        <div className="flex gap-4 mb-6 flex-wrap">
+          {/* Year */}
+          <div className="flex-1">
+            <label className="block text-gray-700 font-medium mb-2">Select Year</label>
+            <select
+              value={year}
+              onChange={(e) => setYear(Number(e.target.value))}
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            >
+              {yearOptions.map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Month */}
+          <div className="flex-1">
+            <label className="block text-gray-700 font-medium mb-2">Select Month</label>
+            <select
+              value={month}
+              onChange={(e) => setMonth(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+            >
+              {monthOptions.map((m) => (
+                <option key={m.value} value={m.value}>{m.label}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* Action Button */}
         <button
           onClick={handleSeedMeals}
           disabled={loading || alreadySeeded}
-          className={`w-full py-3 rounded-xl font-semibold text-white text-lg flex items-center justify-center gap-2 ${
-            loading
+          className={`w-full py-3 rounded-xl font-semibold text-white text-lg flex items-center justify-center gap-2 ${loading
               ? "bg-gray-400 cursor-not-allowed"
               : alreadySeeded
-              ? "bg-green-500 cursor-not-allowed"
-              : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02] shadow-md hover:shadow-lg"
-          }`}
+                ? "bg-green-500 cursor-not-allowed"
+                : "bg-blue-600 hover:bg-blue-700 hover:scale-[1.02] shadow-md hover:shadow-lg"
+            }`}
         >
           {loading
             ? "Seeding..."
             : alreadySeeded
-            ? <>
-                <FaCheckCircle /> Meals Already Seeded for {selectedMonth}
-              </>
-            : `Seed Meals for ${selectedMonth}`}
+              ? <><FaCheckCircle /> Meals Already Seeded for {year}-{month}</>
+              : `Seed Meals for ${year}-${month}`}
         </button>
 
         {/* Info */}
@@ -140,6 +154,7 @@ function AutoBookedMeals() {
             <li>This action cannot be undone once completed.</li>
           </ul>
         </div>
+
       </div>
     </div>
   );

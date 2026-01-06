@@ -1,190 +1,227 @@
 import { useEffect, useState, useMemo } from "react";
 import useAxiosSecure from "../../../Hook/useAxiosSecure";
+import { FaCoins, FaMoneyCheckAlt, FaUsers, FaExclamationTriangle } from "react-icons/fa";
+import SummaryCard from "../../../Components/SummaryCard/SummaryCard";
 
 function AdminPaymentsHistory() {
-  const [payments, setPayments] = useState([]);
-  const [unpaidUsers, setUnpaidUsers] = useState([]);
-
-  const currentMonth = new Date().toISOString().slice(0, 7);
-  const [month, setMonth] = useState(currentMonth);
-
   const axiosSecure = useAxiosSecure();
 
-  // payments
+  const [payments, setPayments] = useState([]);
+  const [unpaidUsers, setUnpaidUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.toISOString().slice(0, 7);
+
+  const [year, setYear] = useState(currentYear);
+  const [month, setMonth] = useState(currentMonth);
+
   const fetchPayments = async () => {
     try {
-      let url = "/payments";
-      if (month) url += `?month=${month}`;
-      const res = await axiosSecure.get(url);
-      setPayments(res.data);
-    } catch (err) {
-      console.error("Failed to fetch payments:", err);
+      const res = await axiosSecure.get(`/payments?month=${month}`);
+      setPayments(res.data || []);
+    } catch (error) {
+      console.error("Fetch payments failed:", error);
     }
   };
 
-  // unpaid users
   const fetchUnpaidUsers = async () => {
     try {
-      const res = await axiosSecure.get("/payments/unpaid");
-      setUnpaidUsers(res.data.unpaidUsers);
-    } catch (err) {
-      console.error(err);
+      const res = await axiosSecure.get(`/payments/unpaid?month=${month}`);
+      setUnpaidUsers(res.data?.unpaidUsers || []);
+    } catch (error) {
+      console.error("Fetch unpaid users failed:", error);
     }
   };
 
   useEffect(() => {
-    fetchPayments();
-    fetchUnpaidUsers();
+    setLoading(true);
+    Promise.all([fetchPayments(), fetchUnpaidUsers()]).finally(() =>
+      setLoading(false)
+    );
   }, [month]);
 
-  // summary
   const summary = useMemo(() => {
-    const totalUsers = payments.length + unpaidUsers.length;
-    const totalPaidAmount = payments.reduce((sum, p) => sum + (p.total || 0), 0);
-    const unpaidCount = unpaidUsers.length;
-    const paidCount = payments.filter((p) => p.status === "Paid").length;
-    return { totalUsers, totalPaidAmount, unpaidCount, paidCount };
+    const totalPaidAmount = payments.reduce(
+      (sum, p) => sum + Number(p.amount || 0),
+      0
+    );
+
+    return {
+      totalUsers: payments.length + unpaidUsers.length,
+      paidCount: payments.length,
+      unpaidCount: unpaidUsers.length,
+      totalPaidAmount,
+    };
   }, [payments, unpaidUsers]);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
+  // Year dropdown 
+  const yearOptions = Array.from({ length: 5 }, (_, i) => currentYear - i);
+
+  // Month dropdown 
+  const monthOptions = Array.from({ length: 12 }, (_, i) => {
+    const m = (i + 1).toString().padStart(2, "0");
+    return `${year}-${m}`;
+  });
+
   return (
-    <div className="md:p-6 bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 min-h-screen">
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-white/80 shadow-md rounded-2xl p-6 mb-6">
-        <h2 className="text-3xl font-bold text-gray-800">Payment History</h2>
-        <div className="flex items-center gap-3 mt-3 md:mt-0 bg-gray-100 px-3 p-2 rounded-lg">
-          <label htmlFor="date" className="font-semibold text-gray-700">
-            Select Date:
-          </label>
-          <input
-            type="month"
+    <div className="p-4 md:p-6 bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 min-h-screen">
+      <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <h2 className="text-3xl font-bold text-gray-800">Admin Payment History</h2>
+
+        <div className="flex gap-2 items-center bg-white rounded-lg shadow px-3 py-2">
+          <span className="text-gray-600 font-semibold">Year:</span>
+          <select
+            value={year}
+            onChange={(e) => {
+              const selectedYear = Number(e.target.value);
+              setYear(selectedYear);
+              setMonth(`${selectedYear}-01`);
+            }}
+            className="border-none focus:ring-0 text-gray-700 bg-transparent"
+          >
+            {yearOptions.map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+
+          <select
             value={month}
             onChange={(e) => setMonth(e.target.value)}
-            className="p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 focus:outline-none"
-          />
-          {/* <button
-            onClick={() => {
-              fetchPayments();
-              fetchUnpaidUsers();
-            }}
-            className="px-5 py-2 bg-blue-600 text-white rounded-lg shadow-md hover:bg-blue-700 transition duration-200"
+            className="border-none focus:ring-0 text-gray-700 bg-transparent"
           >
-            Search
-          </button> */}
+            {monthOptions.map((m) => (
+              <option key={m} value={m}>
+                {new Date(m + "-01").toLocaleString("default", { month: "long" })}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <div className="bg-red-500 text-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
-          <h4 className="text-sm font-medium opacity-90">Total Paid (TK)</h4>
-          <p className="text-2xl font-bold mt-1">{summary.totalPaidAmount} TK</p>
-        </div>
-
-        <div className="bg-indigo-500 text-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
-          <h4 className="text-sm font-medium opacity-90">Total Users</h4>
-          <p className="text-2xl font-bold mt-1">{summary.totalUsers}</p>
-        </div>
-
-        <div className="bg-green-500 text-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
-          <h4 className="text-sm font-medium opacity-90">Paid Users</h4>
-          <p className="text-2xl font-bold mt-1">{summary.paidCount}</p>
-        </div>
-
-        <div className="bg-blue-500 text-white p-5 rounded-xl shadow-md hover:shadow-lg transition">
-          <h4 className="text-sm font-medium opacity-90">Unpaid Users</h4>
-          <p className="text-2xl font-bold mt-1">{summary.unpaidCount}</p>
-        </div>
+      {/* summary table */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <SummaryCard
+          icon={<FaMoneyCheckAlt />}
+          label="Total Paid (৳)"
+          value={summary.totalPaidAmount}
+          color="blue"
+        />
+        <SummaryCard
+          icon={<FaUsers />}
+          label="Total Users"
+          value={summary.totalUsers}
+          color="indigo"
+        />
+        <SummaryCard
+          icon={<FaCoins />}
+          label="Paid Users"
+          value={summary.paidCount}
+          color="green"
+        />
+        <SummaryCard
+          icon={<FaExclamationTriangle />}
+          label="Unpaid Users"
+          value={summary.unpaidCount}
+          color="orange"
+        />
       </div>
 
-      {/* Paid Users Table */}
-      <div className="bg-white/80 rounded-xl shadow-md p-4 mb-8 backdrop-blur-md">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">
-          Paid Users
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left border-collapse">
-            <thead className="bg-blue-100 text-gray-700">
-              <tr>
-                <th className="p-3 font-medium">Name</th>
-                <th className="p-3 font-medium">Student ID</th>
-                <th className="p-3 font-medium">Email</th>
-                <th className="p-3 font-medium">Month</th>
-                <th className="p-3 font-medium">Amount</th>
-                <th className="p-3 font-medium">Payment Method</th>
-                <th className="p-3 font-medium">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {payments.length > 0 ? (
-                payments.map((p) => (
-                  <tr
-                    key={p._id}
-                    className="hover:bg-blue-50 border-b last:border-none transition"
-                  >
-                    <td className="p-3 text-gray-800">{p.userName}</td>
-                    <td className="p-3 text-gray-800">{p.studentId}</td>
-                    <td className="p-3 text-gray-800">{p.email}</td>
-                    <td className="p-3 text-gray-800">{p.month}</td>
-                    <td className="p-3 text-green-600 font-semibold">{p.total}</td>
-                    <td className="p-3 text-gray-800">{p.paymentMethod}</td>
-                    <td className="p-3">
-                      <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-600">
-                        {p.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="7" className="p-4 text-center text-gray-500">
-                    No paid users found.
-                  </td>
+      {/* paid users */}
+      <TableWrapper title="Paid Users">
+        <table className="w-full text-left">
+          <thead className="bg-blue-100">
+            <tr>
+              <Th>Name</Th>
+              <Th>Student ID</Th>
+              <Th>Email</Th>
+              <Th>Month</Th>
+              <Th>Amount</Th>
+              <Th>Method</Th>
+              <Th>Status</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {payments.length > 0 ? (
+              payments.map((p) => (
+                <tr key={p._id} className="hover:bg-blue-50 transition">
+                  <Td>{p.userName}</Td>
+                  <Td>{p.studentId}</Td>
+                  <Td>{p.email}</Td>
+                  <Td>{new Date(p.month + "-01").toLocaleString("default", { month: "long", year: "numeric" })}</Td>
+                  <Td className="font-semibold text-green-600">৳{p.amount}</Td>
+                  <Td>{p.method}</Td>
+                  <Td>
+                    <span className="px-2 py-1 rounded-full text-xs bg-green-100 text-green-700">Paid</span>
+                  </Td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+              ))
+            ) : (
+              <EmptyRow colSpan={7} text="No paid users found" />
+            )}
+          </tbody>
+        </table>
+      </TableWrapper>
 
-      {/* Unpaid Users Table */}
-      <div className="bg-white/80 rounded-xl shadow-md p-4 backdrop-blur-md">
-        <h3 className="text-xl font-semibold text-gray-700 mb-4 border-b pb-2">
-          Unpaid Users
-        </h3>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left border-collapse">
-            <thead className="bg-blue-100 text-gray-700">
-              <tr>
-                <th className="p-3 font-medium">Name</th>
-                <th className="p-3 font-medium">Student ID</th>
-                <th className="p-3 font-medium">Email</th>
-              </tr>
-            </thead>
-            <tbody>
-              {unpaidUsers.length > 0 ? (
-                unpaidUsers.map((u) => (
-                  <tr
-                    key={u._id}
-                    className="hover:bg-blue-50 border-b last:border-none transition"
-                  >
-                    <td className="p-3 text-gray-800">{u.name}</td>
-                    <td className="p-3 text-gray-800">{u.studentId}</td>
-                    <td className="p-3 text-gray-800">{u.email}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="3" className="p-4 text-center text-gray-500">
-                    All users have paid.
-                  </td>
+      {/* unpaid users */}
+      <TableWrapper title="Unpaid Users">
+        <table className="w-full text-left">
+          <thead className="bg-red-100">
+            <tr>
+              <Th>Name</Th>
+              <Th>Student ID</Th>
+              <Th>Email</Th>
+            </tr>
+          </thead>
+          <tbody>
+            {unpaidUsers.length > 0 ? (
+              unpaidUsers.map((u) => (
+                <tr key={u._id} className="hover:bg-red-50 transition">
+                  <Td>{u.name}</Td>
+                  <Td>{u.studentId}</Td>
+                  <Td>{u.email}</Td>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+              ))
+            ) : (
+              <EmptyRow colSpan={3} text="All users have paid" />
+            )}
+          </tbody>
+        </table>
+      </TableWrapper>
     </div>
   );
 }
+
+const TableWrapper = ({ title, children }) => (
+  <div className="bg-white rounded-xl shadow p-4 mb-8 overflow-x-auto">
+    <h3 className="text-xl font-semibold mb-3">{title}</h3>
+    {children}
+  </div>
+);
+
+const Th = ({ children }) => (
+  <th className="p-3 text-left font-semibold text-gray-700">{children}</th>
+);
+
+const Td = ({ children, className = "" }) => (
+  <td className={`p-3 text-gray-800 ${className}`}>{children}</td>
+);
+
+const EmptyRow = ({ colSpan, text }) => (
+  <tr>
+    <td colSpan={colSpan} className="p-4 text-center text-gray-500">
+      {text}
+    </td>
+  </tr>
+);
 
 export default AdminPaymentsHistory;

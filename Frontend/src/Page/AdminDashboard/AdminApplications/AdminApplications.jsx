@@ -34,17 +34,6 @@ function AdminApplications() {
 
     return (
         <div className="w-full mx-auto md:p-6 mt-1 bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 min-h-screen rounded-2xl">
-       
-
-            {/* <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-white/80 shadow-md rounded-2xl p-6 mb-6">
-                <div className="flex flex-col md:flex-row items-center justify-between gap-6 p-6">
-           
-                    <h1 className="text-3xl font-bold text-gray-800">
-                        Hostel Applications
-                    </h1>
-                    <p className="text-2xl font-bold mt-1">Total Applications: {applications.length}</p>
-                </div>
-            </div> */}
 
              <div className="flex flex-col md:flex-row md:items-center md:justify-between bg-white/80 shadow-md rounded-2xl p-6 mb-6">
         <h2 className="text-3xl font-bold text-gray-800">  Hostel Applications</h2>

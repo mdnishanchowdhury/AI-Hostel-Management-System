@@ -86,7 +86,7 @@ function AdminRooms() {
     return (
         <div className="md:p-6 bg-gradient-to-br from-blue-50 via-gray-50 to-gray-100 min-h-screen rounded-2xl">
 
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 bg-white/80 shadow-md rounded-2xl p-6">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between py-6">
                 <h1 className="text-3xl font-bold text-gray-800 text-center">Room Management</h1>
             </div>
 
