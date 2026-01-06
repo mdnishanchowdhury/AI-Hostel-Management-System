@@ -224,8 +224,7 @@ const getUserMealsHistory = async (req, res) => {
 };
 
 
-
-// // GET: check if month is already seeded
+ // check if month is already seeded
 const checkMonthSeeded = async (req, res) => {
     const { month, year } = req.query;
     if (!month || !year) {
