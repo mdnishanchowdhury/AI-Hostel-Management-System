@@ -77,9 +77,11 @@ function Navbar() {
     <div className="fixed top-0 w-full z-20 bg-white/5 backdrop-blur-md px-4 md:px-6 py-3 shadow-sm">
       <div className="max-w-[1322px] mx-auto flex justify-between items-center">
 
-        <h2 className="text-2xl font-bold font-poppins uppercase text-black">
+        {/* <h2 className="text-2xl font-bold font-poppins uppercase text-black">
           Smart Hostel
-        </h2>
+        </h2> */}
+
+        <img className='w-40 h-13 object-cover' src="https://i.ibb.co.com/2rVZSDt/Screenshot-2026-01-16-040835-removebg-preview.png" alt="Smart Hostel" />
 
         <div className="flex items-center gap-8">
           <ul className="hidden lg:flex flex-row gap-8 xl:gap-14 text-[15px]">

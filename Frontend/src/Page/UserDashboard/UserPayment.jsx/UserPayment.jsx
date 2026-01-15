@@ -3,9 +3,11 @@ import useAxiosSecure from "../../../Hook/useAxiosSecure";
 import useAuth from "../../../Hook/useAuth";
 import MenuLoading from "../../../Components/Loading/MenuLoading";
 import Swal from "sweetalert2";
-import { FaCoins, FaUtensils, FaMoneyCheckAlt, FaCalendarAlt } from "react-icons/fa";
 
-export default function UserPayment() {
+import { FaCoins, FaUtensils, FaMoneyCheckAlt, FaCalendarAlt } from "react-icons/fa";
+import generatePaymentPDF from "../../../utils/generatePaymentPDF";
+
+function UserPayment() {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
 
@@ -17,7 +19,7 @@ export default function UserPayment() {
   const currentMonth = currentDate.toISOString().slice(0, 7); // YYYY-MM
 
   const [year, setYear] = useState(currentYear);
-  const [month, setMonth] = useState(currentMonth); 
+  const [month, setMonth] = useState(currentMonth);
   const [mealCost, setMealCost] = useState(0);
   const [roomRent] = useState(4500);
   const [total, setTotal] = useState(4500);
@@ -140,6 +142,17 @@ export default function UserPayment() {
     );
   };
 
+
+  // pdf
+  const handleDownloadPDF = (payment) => {
+    generatePaymentPDF({
+      payment,
+      profile,
+      user,
+    });
+  };
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 py-10 px-4">
       {/* Header with Year + Month */}
@@ -147,7 +160,7 @@ export default function UserPayment() {
         <h1 className="text-3xl font-bold text-gray-800">Hostel Payment</h1>
         <div className="flex items-center gap-3 bg-white rounded-lg shadow px-3 py-2">
           <FaCalendarAlt className="text-gray-600 text-lg" />
-          
+
           {/* Year Dropdown */}
           <select
             value={year}
@@ -204,6 +217,8 @@ export default function UserPayment() {
                 <th className="py-3 px-4">Method</th>
                 <th className="py-3 px-4">Status</th>
                 <th className="py-3 px-4 rounded-tr-lg">Paid At</th>
+                <th className="py-3 px-4">Receipt</th>
+
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -223,6 +238,19 @@ export default function UserPayment() {
                       </span>
                     </td>
                     <td className="py-3 px-4 text-gray-500">{p.paidAt ? new Date(p.paidAt).toLocaleString() : "-"}</td>
+                    <td className="py-3 px-4">
+                      {p.status === "Paid" ? (
+                        <button
+                          onClick={() => handleDownloadPDF(p)}
+                          className="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm"
+                        >
+                          Download PDF
+                        </button>
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+
                   </tr>
                 ))
               ) : (
@@ -237,3 +265,4 @@ export default function UserPayment() {
     </div>
   );
 }
+export default UserPayment;

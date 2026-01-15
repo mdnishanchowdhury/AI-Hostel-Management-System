@@ -16,6 +16,8 @@
     "@tanstack/react-table": "^8.21.3",
     "axios": "^1.12.2",
     "firebase": "^12.3.0",
+    "jspdf": "^4.0.0",
+    "jspdf-autotable": "^5.0.7",
     "localforage": "^1.10.0",
     "lucide-react": "^0.544.0",
     "match-sorter": "^8.1.0",

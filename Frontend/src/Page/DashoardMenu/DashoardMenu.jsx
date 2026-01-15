@@ -58,7 +58,7 @@ const DashoardMenu = ({ onLinkClick }) => {
     <div className="flex flex-col h-full overflow-y-auto bg-gray-800 text-white">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700">
-        <h2 className="text-green-400 font-bold text-lg tracking-wide">Smart Hostel</h2>
+        <img className='w-40 h-13 object-cover' src="https://i.ibb.co.com/2rVZSDt/Screenshot-2026-01-16-040835-removebg-preview.png" alt="Smart Hostel" />
       </div>
 
       {/* Menu Items */}

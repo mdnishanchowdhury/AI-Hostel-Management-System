@@ -10,9 +10,9 @@ function DashboardMain() {
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Mobile Top Navbar */}
       <div className="md:hidden fixed top-0 left-0 w-full z-50 bg-white/10 backdrop-blur-md p-4 shadow-sm flex items-center justify-between">
-        <h2 className="text-2xl font-bold font-poppins uppercase text-green-500">
-          Smart Hostel
-        </h2>
+
+        <img className='w-30 h-13 object-cover' src="https://i.ibb.co.com/2rVZSDt/Screenshot-2026-01-16-040835-removebg-preview.png" alt="Smart Hostel" />
+
         <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
           {mobileMenuOpen ? (
             <FaTimes className="w-6 h-6 text-green-500" />
