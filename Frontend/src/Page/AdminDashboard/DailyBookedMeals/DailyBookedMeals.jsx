@@ -141,7 +141,9 @@ function DailyBookedMeals() {
             <table className="w-full text-sm text-left border-collapse">
               <thead className="bg-blue-100 text-gray-700">
                 <tr>
-                  <th className="p-3 font-semibold">Email</th>
+                  <th className="p-3 font-semibold">Name</th>
+                  <th className="p-3 font-semibold">Student Id</th>
+                  {/* <th className="p-3 font-semibold">Email</th> */}
                   <th className="p-3 font-semibold">Booked Meals</th>
                   <th className="p-3 font-semibold">Canceled Meals</th>
                 </tr>
@@ -150,7 +152,9 @@ function DailyBookedMeals() {
                 {summary.userList?.length > 0 ? (
                   summary.userList.map((user, idx) => (
                     <tr key={idx} className="border-b hover:bg-blue-50 transition">
-                      <td className="p-3 font-medium text-gray-800">{user.email}</td>
+                      <td className="p-3 font-medium text-gray-800">{user.name}</td>
+                      <td className="p-3 font-medium text-gray-800">{user.studentId}</td>
+                      {/* <td className="p-3 font-medium text-gray-800">{user.email}</td> */}
                       <td className="p-3 text-gray-700">{user.bookedMeals.join(", ") || "-"}</td>
                       <td className="p-3 text-gray-700">{user.canceledMeals.join(", ") || "-"}</td>
                     </tr>

@@ -45,7 +45,7 @@ function AdminMealsHistory() {
   });
 
   const filteredHistory = history.filter((user) =>
-    user.email.toLowerCase().includes(searchEmail.toLowerCase())
+    user.studentId.toLowerCase().includes(searchEmail.toLowerCase())
   );
 
   const totalSummary = history.reduce(
@@ -100,7 +100,7 @@ function AdminMealsHistory() {
 
           <input
             type="text"
-            placeholder="Search by email..."
+            placeholder="Search by studentId..."
             value={searchEmail}
             onChange={(e) => setSearchEmail(e.target.value)}
             className="border-none focus:ring-2 focus:ring-blue-400 focus:outline-none rounded-lg px-3 py-2 w-52"
@@ -139,12 +139,13 @@ function AdminMealsHistory() {
         </p>
       ) : filteredHistory.length > 0 ? (
         filteredHistory.map((user, idx) => (
+          
           <div
             key={idx}
             className="mb-8 p-6 bg-white shadow-md rounded-2xl hover:shadow-lg transition duration-300"
           >
             <div className="flex flex-wrap items-center justify-between mb-3">
-              <h2 className="text-lg font-bold text-gray-800">{user.email}</h2>
+              <h2 className="text-lg font-bold text-gray-800">Student ID: {user.studentId}</h2>
               <p className="text-sm text-gray-600">
                 Meals: <b>{user.totalMeals}</b> | Total:{" "}
                 <b className="text-green-600">{user.totalPrice} TK</b>
